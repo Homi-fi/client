@@ -11,7 +11,12 @@ const DetailStack = createStackNavigator({
 })
 
 const RoomStack = createStackNavigator({
-  Room: RoomScreen
+  Room: {
+      screen:RoomScreen,
+      navigationOptions: {
+        header:null
+      }
+  },
 })
 
 const SchedulerStack = createStackNavigator({
