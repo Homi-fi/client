@@ -1,4 +1,4 @@
-import { db } from 'src/configs/firebase'
+import { db } from '../configs/firebase'
 
 export const User = db.collection('doors')
 export const Lamp = db.collection('lamps')
