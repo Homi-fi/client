@@ -8,6 +8,10 @@ import SchedulerScreen from '../screens/scheduler'
 
 const DetailStack = createStackNavigator({
   Detail: DetailScreen
+}, {
+  defaultNavigationOptions: {
+    header: null
+  }
 })
 
 const RoomStack = createStackNavigator({
