@@ -1,14 +1,23 @@
 import React, {useState, useEffect} from 'react'
-import { Image,View, StyleSheet, TouchableOpacity,Text} from 'react-native'
+import { Image,View, StyleSheet, TouchableOpacity,Text, AsyncStorage} from 'react-native'
 import * as Font from 'expo-font';
 import Constants from 'expo-constants';
 import { Sensor, Room } from '../../apis/firebase'
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 function Rooms(){
+    const [myname, setMyName] = useState('')
     const [fontLoaded, setFont] = useState(false)
     const [roomies, setRooms] = useState([])
     const [sense, setSense] = useState(null)
+    const getName = async() => {
+        let name = await AsyncStorage.getItem('name')
+        setMyName(name)
+    }
+    useEffect(()=>{
+        getName()
+    },[])
     useEffect(()=>{
         Font.loadAsync({
           'neo-sans-medium': require('../../assets/NeoSansMedium.otf'),
@@ -45,12 +54,48 @@ function Rooms(){
         });
       },[])
 
+    const checkSensors = (el) => {
+        if(el == "light"){
+            if(sense[el]){
+                return(
+                <>
+                <MaterialCommunityIcons name="lightbulb-on" size={70} color="#FFFF66" style={{marginLeft:15}} />
+                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{el}</Text>
+                </>
+                )
+            }else{
+                return(
+                <>
+                <MaterialCommunityIcons name="lightbulb" size={70} color="#FFFF66" />
+                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right", color:"grey"}}>{el}</Text>
+                </>
+                )
+            }
+        }else if(el == "temperature"){
+            return(    
+                <>      
+               <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense[el]}</Text>
+               <MaterialCommunityIcons name="temperature-celsius" size={15} color="black" style={{position:"absolute",right:10,top:70}} />
+               <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{el}</Text>
+                </>
+        )
+        }else if(el == "humidity"){
+            return(
+                <>      
+               <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense[el]}  </Text>
+               <Text style={{position:"absolute", right:10,top:70}}>%</Text>
+               <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{el}</Text>
+                </>
+            )
+
+        }
+    }
 
     return(
         <View style={styles.container}>
             <View style={styles.upBox}>
-                 {fontLoaded?<Text style={{fontFamily:"neo-sans-medium", fontSize:25}}>Hello, Ronaldo! </Text>:null}
-                {fontLoaded?<Text style={{fontFamily:"neo-sans-medium"}}>What are you up to?</Text>:null}
+                 {fontLoaded?<Text style={{fontFamily:"neo-sans-medium", fontSize:25}}>Hello, {myname}! </Text>:null}
+                 {fontLoaded?<Text style={{fontFamily:"neo-sans-medium"}}>What are you up to?</Text>:null}
             </View>
             <View style={styles.rooms}>
 
@@ -60,7 +105,6 @@ function Rooms(){
                             {
                                 el.name == "bedroom" ? <Image source={{uri:"https://images.unsplash.com/photo-1536349788264-1b816db3cc13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80"}} style={{width:160,height:270}}></Image>:<Image source={{uri:"https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80"}} style={{width:160,height:270}}></Image>
                             }
-                            
                         {fontLoaded?<Text style={{position:"absolute", bottom:20, left: 15, fontFamily:"neo-sans-medium", color:"white"}}>{el.name}</Text>:null}
                        </TouchableOpacity>)
                     }
@@ -74,13 +118,15 @@ function Rooms(){
                     sense && Object.keys(sense).map((el,i) => {
                         return (
                             <TouchableOpacity style={styles.sensorz} key={i}>
+                                <View style={{height:30}}>
+                                {el == 'humidity' ? <Ionicons name="ios-water" size={20} color="#fec894" />:null}
+                                {el == 'temperature' ? <MaterialCommunityIcons name="thermometer" size={20} color="#fec894" />:null}
+                                {el == 'light' ? <MaterialCommunityIcons name="lightbulb-outline" size={20} color="#fec894" />:null}
+                                </View>
                                 {
-                                    fontLoaded?<Text style={{fontSize:50, fontFamily:"neo-sans-medium", textAlign:"right"}}>{sense[el]}</Text>:null
+                                    fontLoaded ? checkSensors(el):null
                                 }
-                                {
-                                    fontLoaded?<Text style={{fontFamily:"neo-sans-medium"}}>{el}</Text>:null
-                                }
-                            
+                                
                             </TouchableOpacity>
                         )
                     })
@@ -135,9 +181,10 @@ const styles = StyleSheet.create({
         backgroundColor:"white",
         borderRadius: 5,
         padding:10,
-        justifyContent:"flex-end"
+        justifyContent:"space-between"
     },
     roomz:{
+        overflow:"hidden",
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

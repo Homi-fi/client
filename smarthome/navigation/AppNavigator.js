@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs'
 import DetailScreen from '../screens/detail'
 import RoomScreen from '../screens/room'
 import SchedulerScreen from '../screens/scheduler'
+import Login from '../screens/login'
 
 const DetailStack = createStackNavigator({
   Detail: DetailScreen
@@ -26,7 +27,8 @@ const SchedulerStack = createStackNavigator({
 const TabNavigator = createBottomTabNavigator({
   Detail: DetailStack,
   Room: RoomStack,
-  Scheduler: SchedulerStack
+  Scheduler: SchedulerStack,
+  Login:Login
 })
 
 export default createAppContainer(TabNavigator)
