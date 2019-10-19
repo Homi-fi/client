@@ -69,7 +69,7 @@ export default (props) => {
                                     let shadow = null
                                     let labelAuto = ""
                                     lamp.nightAuto ? labelAuto = "Auto on" : labelAuto = "Auto off"
-                                    lamp.status ? shadow = "#c18501" : shadow = '#000'
+                                    lamp.status ? shadow = "#fec894" : shadow = '#000'
                                     
                                     return (
                                         <TouchableOpacity key={lamp.id} onPress={() => {
@@ -82,8 +82,8 @@ export default (props) => {
                                                     label={labelAuto}
                                                     isOn={lamp.night}
                                                     labelStyle={{color: 'silver'}}
-                                                    onColor="#e8d296"
-                                                    offColor="#dbdbdb"
+                                                    onColor="#fec894"
+                                                    offColor="#ecf0f1"
                                                     size="medium"
                                                     onToggle={isOn => changeDay(lamp.id, isOn)}
                                                 />

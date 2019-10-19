@@ -19,8 +19,8 @@ Stack.navigationOptions = ({navigation}) => ({
         backgroundColor: '#f9f9f9',
     },
     headerBackTitleStyle: {
-        color: '#e8d296'
+        color: '#fec894'
     },
-    headerTintColor: '#e8d296'
+    headerTintColor: '#fec894'
 })
 export default Stack
