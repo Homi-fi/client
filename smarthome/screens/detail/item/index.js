@@ -4,24 +4,26 @@ import ToggleSwitch from 'toggle-switch-react-native'
 import { Lamp } from '../../../apis/firebase'
 
 export default (props) => {
-  const { item } = props
+  const { item, navigation } = props
 
   const [isOn, setIsOn] = useState(false)
 
   const toggleHandler = async () => {
     setIsOn(!isOn)
-  }
 
-  const pressHandler = async () => {
     try {
-      await Lamp.doc('krTjlLxFeeXiqPNRioL8').update({ status: false })
+      await Lamp.doc(item.id).update({ status: !isOn })
     } catch (err) {
       console.log(err)
     }
   }
 
+  const modalHandler = () => {
+    navigation.navigate('Modal')
+  }
+  
   return (
-    <Container>
+    <Container onPress={modalHandler}>
       <ItemName>{item.name}</ItemName>
       <ToggleSwitch
         isOn={isOn}
@@ -34,7 +36,7 @@ export default (props) => {
   )
 }
 
-const Container = styled.View`
+const Container = styled.TouchableOpacity`
   height: 50;
   width: 100%;
   background-color: #fff;
