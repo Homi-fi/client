@@ -1,4 +1,4 @@
-import { createAppContainer } from 'react-navigation'
+import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
 
@@ -8,6 +8,7 @@ import ModalDetail from '../screens/detail/modal'
 import RoomScreen from '../screens/room'
 
 import SchedulerScreen from '../screens/scheduler'
+import Login from '../screens/login'
 import SettingScheduler from '../screens/scheduler/stack'
 
 const DetailStack = createStackNavigator({
@@ -30,7 +31,18 @@ DetailStack.navigationOptions = ({ navigation }) => {
 }
 
 const RoomStack = createStackNavigator({
-  Room: RoomScreen
+  Room: {
+      screen:RoomScreen,
+      navigationOptions: {
+        header:null
+      }
+  },
+  Detail: {
+    screen: DetailStack,
+    navigationOptions: {
+      header:null
+    }
+},
 })
 
 const SchedulerStack = createStackNavigator({
@@ -49,11 +61,14 @@ const SchedulerStack = createStackNavigator({
 })
 
 const TabNavigator = createBottomTabNavigator({
-  Detail: DetailStack,
   Room: RoomStack,
-  Scheduler: SchedulerStack
-}, {
-  initialRouteName: 'Scheduler'
+  Scheduler: SchedulerStack,
 })
 
-export default createAppContainer(TabNavigator)
+const switchNav = createSwitchNavigator({
+  App: TabNavigator,
+  LandingPage:Login,
+  
+})
+
+export default createAppContainer(switchNav)

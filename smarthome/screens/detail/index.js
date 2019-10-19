@@ -65,7 +65,7 @@ export default (props) => {
   return (
     <Container>
       <HeadingCont>
-        <Heading>Living Room</Heading>
+        <Heading style={{fontFamily:"neo-sans-medium"}}>Living Room</Heading>
       </HeadingCont>
       <ListCont>
         {/* <BarCodeScanner onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} style={{ height: 500, backgroundColor: 'red' }} /> */}

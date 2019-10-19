@@ -4,13 +4,23 @@ import Constants from 'expo-constants';
 import {Lamp} from '../../apis/firebase'
 import ToggleSwitch from 'toggle-switch-react-native'
 import {db} from '../../configs/firebase'
+import * as Font from 'expo-font';
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 
 export default (props) => {
+    const [fontLoaded, setFont] = useState(false)
     const [lamps, setLamps] = useState([])
     const [loading, setLoading] = useState(true)
     let unsubscribe = null
+
+    useEffect(()=>{
+        Font.loadAsync({
+          'neo-sans-medium': require('../../assets/NeoSansMedium.otf'),
+        }).then(()=>{
+          setFont(true)
+        })
+      },[])
 
     const fetchLamp = () => {
         unsubscribe = Lamp.where("userId", "==", "123")
@@ -81,7 +91,7 @@ export default (props) => {
                                                 <ToggleSwitch
                                                     label={labelAuto}
                                                     isOn={lamp.night}
-                                                    labelStyle={{color: 'silver'}}
+                                                    labelStyle={{color: 'silver',fontFamily:"neo-sans-medium"}}
                                                     onColor="#fec894"
                                                     offColor="#ecf0f1"
                                                     size="medium"
@@ -129,6 +139,7 @@ const styles = {
       fontSize: 22,
       fontWeight: '600',
       letterSpacing: 2,
-      color: '#383838'
+      color: '#383838',
+      fontFamily:"neo-sans-medium"
     }
 }

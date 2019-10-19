@@ -3,10 +3,12 @@ import {View, Text, StatusBar, ActivityIndicator, Dimensions, TouchableOpacity} 
 import Constants from 'expo-constants';
 import {Lamp} from '../../apis/firebase'
 import ToggleSwitch from 'toggle-switch-react-native'
+import * as Font from 'expo-font';
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 
 export default (props) => {
+    const [fontLoaded, setFont] = useState(false)
     const [lamps, setLamps] = useState([])
     const [loading, setLoading] = useState(true)
     let unsubscribe = null
@@ -25,6 +27,13 @@ export default (props) => {
             setLoading(false)
         });
     }
+    useEffect(()=>{
+        Font.loadAsync({
+          'neo-sans-medium': require('../../assets/NeoSansMedium.otf'),
+        }).then(()=>{
+          setFont(true)
+        })
+      },[])
 
     const changeDay = (id, val) => { 
         Lamp.doc(id).update({day: val})
@@ -79,7 +88,7 @@ export default (props) => {
                                                 <ToggleSwitch
                                                     label={labelAuto}
                                                     isOn={lamp.day}
-                                                    labelStyle={{color: 'silver'}}
+                                                    labelStyle={{color: 'silver', fontFamily:"neo-sans-medium"}}
                                                     onColor="#fec894"
                                                     offColor="#ecf0f1"
                                                     size="medium"
@@ -127,6 +136,7 @@ const styles = {
       fontSize: 22,
       fontWeight: '600',
       letterSpacing: 2,
-      color: '#383838'
+      color: '#383838',
+      fontFamily:"neo-sans-medium"
     }
 }

@@ -1,11 +1,22 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import {StatusBar, View, TouchableOpacity, Dimensions, Text, ImageBackground} from 'react-native'
 import Constants from 'expo-constants';
+import * as Font from 'expo-font';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
 
 export default (props) => {
+  const [fontLoaded, setFont] = useState(false)
+
+  useEffect(()=>{
+    Font.loadAsync({
+      'neo-sans-medium': require('../../assets/NeoSansMedium.otf'),
+    }).then(()=>{
+      setFont(true)
+    })
+  },[])
+
   return (
     <>
       <StatusBar barStyle={'dark-content'} />
@@ -47,6 +58,7 @@ const styles = {
     fontSize: 22,
     fontWeight: '600',
     letterSpacing: 2,
-    color: 'white'
+    color: 'white',
+    fontFamily:"neo-sans-medium"
   }
 }

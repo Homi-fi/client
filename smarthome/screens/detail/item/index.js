@@ -24,7 +24,7 @@ export default (props) => {
   
   return (
     <Container onPress={modalHandler}>
-      <ItemName>{item.name}</ItemName>
+      <ItemName style={{fontFamily:"neo-sans-medium"}}>{item.name}</ItemName>
       <ToggleSwitch
         isOn={isOn}
         onColor="#fec894"
