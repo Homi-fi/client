@@ -8,7 +8,7 @@ import Swiper from 'react-native-swiper'
 import {Form, Item, Label, Input,Button,Icon} from 'native-base'
 import {register, signin} from '../../store/action'
 
-export default () => {
+export default (props) => {
     const dispatch = useDispatch()
     const [fontLoaded, setFont] = useState(false)
     const [emailLogin, setLogin] = useState('')
@@ -36,6 +36,7 @@ export default () => {
             password: passwordLogin,
         }
         dispatch(signin(data))
+        props.navigation.navigate('App')
         setLogin('')
         setPassL('')
     }
