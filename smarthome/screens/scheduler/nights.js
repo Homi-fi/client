@@ -93,7 +93,7 @@ export default (props) => {
                                 })
                             }
                             <View style={{padding: 30}}>
-                                <Text style={{color: 'silver', textAlign: 'center'}}>When the sun rises. All the selected devices will be turned on or off</Text>
+                                <Text style={{color: 'silver', textAlign: 'center'}}>When the sun sets. All the selected devices will be turned on or off</Text>
                             </View>
                         </>
                     }                   

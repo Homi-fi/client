@@ -37,7 +37,6 @@ export default (props) => {
         });
     } 
     const changeDayAuto = (id, val) => {
-        console.log(id, val,'<<<<<<<<<<')
         Lamp.doc(id).update({ dayAuto: val })
         .then(function() {
             console.log("Document successfully updated!");
@@ -75,7 +74,7 @@ export default (props) => {
                                                 changeDayAuto(lamp.id, !lamp.dayAuto)
                                             }
                                         }>
-                                            <View  style={[styles.menu, {shadowColor: shadow}]}>
+                                            <View style={[styles.menu, {shadowColor: shadow}]}>
                                                 <Text style={styles.text}>{lamp.name}</Text>
                                                 <ToggleSwitch
                                                     label={labelAuto}

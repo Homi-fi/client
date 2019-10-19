@@ -10,7 +10,7 @@ const Stack = (props) => {
     }else if(page == 'Nights'){
         return <Nights />
     }
-    else return <Other /> 
+    // else return <Other /> 
 }
 
 Stack.navigationOptions = ({navigation}) => ({

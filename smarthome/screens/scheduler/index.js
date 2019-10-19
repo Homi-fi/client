@@ -1,5 +1,5 @@
 import React from 'react'
-import {StatusBar, View, TouchableOpacity, Dimensions, Text} from 'react-native'
+import {StatusBar, View, TouchableOpacity, Dimensions, Text, ImageBackground} from 'react-native'
 import Constants from 'expo-constants';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -12,22 +12,22 @@ export default (props) => {
       <View style={{flex: 1, backgroundColor: '#f9f9f9'}}>
         <View style={{marginTop: Constants.statusBarHeight, flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%'}}>
           <TouchableOpacity onPress={()=> props.navigation.navigate('Setting', { page: 'Days' })}>
-            <View style={styles.menu}>
+            <ImageBackground source={require('../../assets/sun.jpg')} style={styles.menu}  imageStyle={{ borderRadius: 10 }}>
               <Text style={styles.text}>Days</Text>
-            </View>
+            </ImageBackground>
           </TouchableOpacity>
           
           <TouchableOpacity onPress={()=> props.navigation.navigate('Setting', { page: 'Nights' })}>
-            <View style={styles.menu}>
+            <ImageBackground source={require('../../assets/night.png')} style={styles.menu} imageStyle={{ borderRadius: 10 }}>
               <Text style={styles.text}>Nights</Text>
-            </View>
+            </ImageBackground>       
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={()=> props.navigation.navigate('Setting', { page: 'Other' })}>
+          {/* <TouchableOpacity onPress={()=> props.navigation.navigate('Setting', { page: 'Other' })}>
             <View style={styles.menu}>
               <Text style={styles.text}>Other routines</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </>
@@ -39,8 +39,7 @@ const styles = {
     width: screenWidth*0.9,
     height: 80,
     borderRadius: 15,
-    backgroundColor: '#e8d296',
-    marginBottom: 20,
+    marginBottom: 30,
     justifyContent: 'center',
     padding: 20
   },
