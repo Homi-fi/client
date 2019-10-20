@@ -48,6 +48,7 @@ function Rooms(props){
         getName()
         getPermission()
     },[])
+    
     useEffect(()=>{
         Font.loadAsync({
           'neo-sans-medium': require('../../assets/NeoSansMedium.otf'),
