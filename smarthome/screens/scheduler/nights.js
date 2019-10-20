@@ -69,7 +69,7 @@ export default (props) => {
     return (
         <>
             <StatusBar barStyle={'dark-content'} />
-            <View style={{flex: 1, backgroundColor: '#f9f9f9'}}>
+            <View style={{flex: 1, backgroundColor: 'black'}}>
                 <View style={{marginTop: Constants.statusBarHeight, flex: 1, alignItems: 'center', width: '100%'}}>
                     {
                         loading ? <ActivityIndicator size="small" color="#e8d296"/> :
@@ -79,7 +79,7 @@ export default (props) => {
                                     let shadow = null
                                     let labelAuto = ""
                                     lamp.nightAuto ? labelAuto = "Auto on" : labelAuto = "Auto off"
-                                    lamp.status ? shadow = "#fec894" : shadow = '#000'
+                                    lamp.status ? shadow = "#fec894" : shadow = 'white'
                                     
                                     return (
                                         <TouchableOpacity key={lamp.id} onPress={() => {
@@ -119,7 +119,7 @@ const styles = {
         width: screenWidth*0.9,
         height: 80,
         borderRadius: 15,
-        backgroundColor: 'white',
+        backgroundColor: '#919191',
         marginBottom: 20,
         justifyContent: 'center',
         flexDirection: 'row',
@@ -139,7 +139,7 @@ const styles = {
       fontSize: 22,
       fontWeight: '600',
       letterSpacing: 2,
-      color: '#383838',
+      color: '#f4f4f4',
       fontFamily:"neo-sans-medium"
     }
 }

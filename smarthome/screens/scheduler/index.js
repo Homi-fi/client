@@ -4,7 +4,6 @@ import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
-const screenHeight = Math.round(Dimensions.get('window').height);
 
 export default (props) => {
   const [fontLoaded, setFont] = useState(false)
@@ -20,10 +19,10 @@ export default (props) => {
   return (
     <>
       <StatusBar barStyle={'dark-content'} />
-      <View style={{flex: 1, backgroundColor: '#f9f9f9'}}>
-        <View style={{marginTop: Constants.statusBarHeight, flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%'}}>
+      <ImageBackground resizeMode={'cover'} source={{uri:'https://images.unsplash.com/photo-1487700160041-babef9c3cb55?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1035&q=80'}} style={{width: '100%', height: '100%'}}>
+        <View style={{marginTop: Constants.statusBarHeight, flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', flexDirection: 'row'}}>
           <TouchableOpacity onPress={()=> props.navigation.navigate('Setting', { page: 'Days' })}>
-            <ImageBackground source={require('../../assets/sun.jpg')} style={styles.menu}  imageStyle={{ borderRadius: 10 }}>
+            <ImageBackground source={require('../../assets/sun.jpg')} style={[styles.menu, {marginRight: 20,}]}   imageStyle={{ borderRadius: 10 }}>
               <Text style={styles.text}>Days</Text>
             </ImageBackground>
           </TouchableOpacity>
@@ -33,25 +32,20 @@ export default (props) => {
               <Text style={styles.text}>Nights</Text>
             </ImageBackground>       
           </TouchableOpacity>
-
-          {/* <TouchableOpacity onPress={()=> props.navigation.navigate('Setting', { page: 'Other' })}>
-            <View style={styles.menu}>
-              <Text style={styles.text}>Other routines</Text>
-            </View>
-          </TouchableOpacity> */}
         </View>
-      </View>
+      </ImageBackground>
     </>
   )
 }
 
 const styles = {
   menu: {
-    width: screenWidth*0.9,
-    height: 80,
+    width: screenWidth*0.4,
+    height: screenWidth*0.5,
     borderRadius: 15,
     marginBottom: 30,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20
   },
   text: {
