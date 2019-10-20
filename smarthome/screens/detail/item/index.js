@@ -43,7 +43,7 @@ export default (props) => {
   }
 
   const modalHandler = () => {
-    navigation.navigate('Modal')
+    navigation.navigate('Modal', { item: item })
   }
 
   return (
