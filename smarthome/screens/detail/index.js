@@ -97,7 +97,6 @@ const Heading = styled.Text`
   font-size: 35;
   color: #fff;
   margin-bottom: 40;
-  font-weight: 600;
 `
 
 const ListCont = styled.View`
