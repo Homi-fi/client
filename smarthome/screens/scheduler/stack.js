@@ -16,11 +16,11 @@ const Stack = (props) => {
 Stack.navigationOptions = ({navigation}) => ({
     title: navigation.getParam('page'),
     headerStyle: {
-        backgroundColor: '#f9f9f9',
+        backgroundColor: navigation.getParam('page') == "Days" ? '#f9f9f9' : "#070707" ,
     },
     headerBackTitleStyle: {
-        color: '#fec894'
+        color: navigation.getParam('page') == "Days" ? '#fec894' : "#f4f4f4"
     },
-    headerTintColor: '#fec894'
+    headerTintColor: navigation.getParam('page') == "Days" ? '#fec894' : "#f4f4f4"
 })
 export default Stack
