@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { Image,View, StyleSheet, TouchableOpacity,Text, AsyncStorage, Alert, Modal, ActivityIndicator,StatusBar} from 'react-native'
 import * as Font from 'expo-font';
-import Constants from 'expo-constants';
-import { Sensor, Room } from '../../apis/firebase'
+import { Sensor, Room, Door } from '../../apis/firebase'
 import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Permissions from 'expo-permissions';
@@ -13,6 +12,7 @@ import { DeviceMotion } from 'expo-sensors';
 
 function Rooms(props){
     const [hasCameraPermission, setCameraPermission] =  useState(null)
+    const [mydoor, setDoor] = useState(null)
     const [scanned, setScanned] = useState(false)
     const [myname, setMyName] = useState('')
     const [fontLoaded, setFont] = useState(false)
@@ -22,7 +22,70 @@ function Rooms(props){
 
     useEffect(()=>{
         shakeListener()
+        checkDoor()
+        props.navigation.addListener(
+            'didBlur',
+            payload => {
+              DeviceMotion.removeAllListeners()
+            }
+          );
+        props.navigation.addListener(
+            'didFocus',
+            payload => {
+              shakeListener()
+            }
+          );
     },[])
+
+    const checkDoor = () => {
+        Door
+        .onSnapshot(function(querySnapshot) {
+            let doorz = [];
+            querySnapshot.forEach(function(doc) {
+                doorz.push(doc.data());
+            });
+
+            setDoor(doorz[0].status)
+        });
+    }
+
+    const updateDoor = () => {
+        let changeMe;
+        if(mydoor){
+            changeMe = false
+        }else{
+            changeMe = true
+        }
+        Door
+        .doc('ogwpJEM8Ekn9JiKtYogA')
+        .update({
+            status: changeMe
+        })
+        .then((data) => {
+            Alert.alert('Success!', 'Successfully updated your door!')
+        })
+        .catch((error)=>{
+            Alert.alert('Error!', 'Failed to update your door!')
+        })
+    }
+
+
+    const changeDoor = () => {
+        let mssg = `The door is ${mydoor ? 'unlocked':'locked'}, do you really want to ${mydoor ? 'lock':'unlock'} the door ?`
+        Alert.alert(
+            'Update Door',
+            mssg,
+            [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {text: 'OK', onPress: () => {updateDoor()}},
+            ],
+            {cancelable: false},
+          );
+    }
 
     const shakeListener = () => {
         DeviceMotion.addListener((data)=>{
@@ -119,40 +182,43 @@ function Rooms(props){
 
 
     return(
-        <View style={styles.container}>
-             <StatusBar backgroundColor="whitesmoke" barStyle="dark-content" />
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>        
-         <BlurView tint="light" intensity={50} style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:"blue"}}>
-        <View style={{width:"90%",alignItems:"flex-start"}}> 
-            <TouchableOpacity
-                onPress={() => {
-                setModalVisible(false);
-              }}>
-                <AntDesign name="closecircleo" size={30} color="#fec894"/>
-            </TouchableOpacity>
+        <>
+           {roomies.length > 0 ?
+           <>
+           <View style={styles.container}>
+           <StatusBar backgroundColor="whitesmoke" barStyle="dark-content" />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>        
+       <BlurView tint="light" intensity={50} style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:"blue"}}>
+      <View style={{width:"90%",alignItems:"flex-start"}}> 
+          <TouchableOpacity
+              onPress={() => {
+              setModalVisible(false);
+            }}>
+              <AntDesign name="closecircleo" size={30} color="#fec894"/>
+          </TouchableOpacity>
+      </View>
+        <View style={{height:500,width:350}}>
+              <BarCodeScanner
+                  onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+              style={StyleSheet.absoluteFillObject}
+              />
         </View>
-          <View style={{height:500,width:350}}>
-                <BarCodeScanner
-                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                style={StyleSheet.absoluteFillObject}
-                />
-          </View>
-          <View>
+        <View>
 
-          {scanned && (
-                <TouchableOpacity onPress={() => setScanned(false)}>
-                    <Text style={{color:"#fec894", fontFamily:"neo-sans-medium"}}>Tap to Scan Again</Text>
-                </TouchableOpacity>
-                )}
-          </View>
-        </BlurView>
-      </Modal>
+        {scanned && (
+              <TouchableOpacity onPress={() => setScanned(false)}>
+                  <Text style={{color:"#fec894", fontFamily:"neo-sans-medium"}}>Tap to Scan Again</Text>
+              </TouchableOpacity>
+              )}
+        </View>
+      </BlurView>
+    </Modal>
             <View style={styles.upBox}>
                 <View style={{width:"100%",justifyContent:"space-between", flexDirection:"row"}}>
                     <TouchableOpacity onPress={()=>{handleBarcode()}}>
@@ -196,12 +262,11 @@ function Rooms(props){
                                 <Text style={{position:"absolute", right:10,top:70}}>%</Text>
                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[0]}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.sensorz}>
+                            <TouchableOpacity style={styles.sensorz} onPress={()=>{changeDoor()}}>
                                 <View style={{height:30}}>
                                 <Ionicons name="ios-home" size={20} color="#fec894" /> 
                                 </View>
-                                <Text style={{fontSize:10, fontFamily:"neo-sans-medium", position:"absolute",right:40,top:105}}>Unlock</Text>
-                                <MaterialCommunityIcons name="home-lock" size={70} color="black" style={{position:"absolute",right:20,top:40}} />
+                               {mydoor ? <MaterialCommunityIcons name="home-lock-open" size={70} color="black" style={{position:"absolute",right:20,top:40}} />:<MaterialCommunityIcons name="home-lock" size={70} color="black" style={{position:"absolute",right:20,top:40}}/> } 
                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>Door</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.sensorz}>
@@ -212,21 +277,33 @@ function Rooms(props){
                                 <MaterialCommunityIcons name="temperature-celsius" size={15} color="black" style={{position:"absolute",right:10,top:70}} />
                                  <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[1]}</Text>
                             </TouchableOpacity>
-                </>:<ActivityIndicator size="large" color="#fec894" />}
+                </>:null}
 
 
 
             </View>
-        </View>
+             </View>
+           </>:<View style={styles.load}><ActivityIndicator size="large" color="#fec894" /></View>
+           
+            } 
+
+       </>
     )
 
 
 }
 
 const styles = StyleSheet.create({
+    load:{
+        flex:1,
+        backgroundColor:"#f9f9f9",
+        justifyContent:"center",
+        alignItems:"center"
+    },
     container: {
         flex:1,
         backgroundColor:"#f9f9f9",
+        marginTop:20
     },
     upBox: {
         height: "20%",
