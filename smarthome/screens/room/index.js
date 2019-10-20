@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Image,View, StyleSheet, TouchableOpacity,Text, AsyncStorage, Alert, Modal} from 'react-native'
+import { Image,View, StyleSheet, TouchableOpacity,Text, AsyncStorage, Alert, Modal, ActivityIndicator,StatusBar} from 'react-native'
 import * as Font from 'expo-font';
 import Constants from 'expo-constants';
 import { Sensor, Room } from '../../apis/firebase'
@@ -7,6 +7,8 @@ import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
 import { BlurView } from 'expo-blur';
 import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { DeviceMotion } from 'expo-sensors';
+
 
 
 function Rooms(props){
@@ -17,6 +19,19 @@ function Rooms(props){
     const [roomies, setRooms] = useState([])
     const [sense, setSense] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
+
+    useEffect(()=>{
+        shakeListener()
+    },[])
+
+    const shakeListener = () => {
+        DeviceMotion.addListener((data)=>{
+            if(data.acceleration["x"] > 10){
+                setModalVisible(true)
+            }
+        })
+    }
+
 
     const getName = async() => {
 
@@ -69,42 +84,6 @@ function Rooms(props){
         });
       },[])
 
-    const checkSensors = (el) => {
-        if(el == "light"){
-            if(sense[el]){
-                return(
-                <>
-                <MaterialCommunityIcons name="lightbulb-on" size={70} color="#FFFF66" style={{marginLeft:15}} />
-                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{el}</Text>
-                </>
-                )
-            }else{
-                return(
-                <>
-                <MaterialCommunityIcons name="lightbulb" size={70} color="#FFFF66" />
-                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right", color:"grey"}}>{el}</Text>
-                </>
-                )
-            }
-        }else if(el == "temperature"){
-            return(    
-                <>      
-               <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense[el]}</Text>
-               <MaterialCommunityIcons name="temperature-celsius" size={15} color="black" style={{position:"absolute",right:10,top:70}} />
-               <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{el}</Text>
-                </>
-        )
-        }else if(el == "humidity"){
-            return(
-                <>      
-               <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense[el]}  </Text>
-               <Text style={{position:"absolute", right:10,top:70}}>%</Text>
-               <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{el}</Text>
-                </>
-            )
-
-        }
-    }
 
     const removeAll = async () => {
         await AsyncStorage.removeItem('token') 
@@ -140,6 +119,7 @@ function Rooms(props){
 
     return(
         <View style={styles.container}>
+             <StatusBar backgroundColor="whitesmoke" barStyle="dark-content" />
         <Modal
           animationType="slide"
           transparent={true}
@@ -148,22 +128,27 @@ function Rooms(props){
             Alert.alert('Modal has been closed.');
           }}>        
          <BlurView tint="light" intensity={50} style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:"blue"}}>
+        <View style={{width:"90%",alignItems:"flex-start"}}> 
+            <TouchableOpacity
+                onPress={() => {
+                setModalVisible(false);
+              }}>
+                <AntDesign name="closecircleo" size={30} color="#fec894"/>
+            </TouchableOpacity>
+        </View>
           <View style={{height:500,width:350}}>
                 <BarCodeScanner
                     onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
                 />
+          </View>
+          <View>
 
-                {scanned && (
-                <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />
+          {scanned && (
+                <TouchableOpacity onPress={() => setScanned(false)}>
+                    <Text style={{color:"#fec894", fontFamily:"neo-sans-medium"}}>Tap to Scan Again</Text>
+                </TouchableOpacity>
                 )}
-             <TouchableOpacity
-            style={{position:"absolute", top:0}}
-              onPress={() => {
-                setModalVisible(false);
-              }}>
-                <AntDesign name="closecircleo" size={30} color="white"/>
-            </TouchableOpacity>
           </View>
         </BlurView>
       </Modal>
@@ -189,7 +174,7 @@ function Rooms(props){
                     roomies.map(el => {
                         return( <TouchableOpacity style={styles.roomz} key={el.id} onPress={()=>{props.navigation.navigate('Detail', {roomId:el.id})}}>
                             {
-                                el.name == "bedroom" ? <Image source={{uri:"https://images.unsplash.com/photo-1536349788264-1b816db3cc13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80"}} style={{width:160,height:270}}></Image>:<Image source={{uri:"https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80"}} style={{width:160,height:270}}></Image>
+                                el.name == "bedroom" ? <Image source={{uri:"https://images.unsplash.com/photo-1536349788264-1b816db3cc13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80"}} style={{width:190,height:270}}></Image>:<Image source={{uri:"https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80"}} style={{width:190,height:270}}></Image>
                             }
                         {fontLoaded?<Text style={{position:"absolute", bottom:20, left: 15, fontFamily:"neo-sans-medium", color:"white"}}>{el.name}</Text>:null}
                        </TouchableOpacity>)
@@ -200,24 +185,36 @@ function Rooms(props){
 
             </View>
             <View style={styles.downBox}>
-                {
-                    sense && Object.keys(sense).map((el,i) => {
-                        return (
-                            <TouchableOpacity style={styles.sensorz} key={i}>
+                {sense ? 
+                <>
+                                            <TouchableOpacity style={styles.sensorz}>
                                 <View style={{height:30}}>
-                                {el == 'humidity' ? <Ionicons name="ios-water" size={20} color="#fec894" />:null}
-                                {el == 'temperature' ? <MaterialCommunityIcons name="thermometer" size={20} color="#fec894" />:null}
-                                {el == 'light' ? <MaterialCommunityIcons name="lightbulb-outline" size={20} color="#fec894" />:null}
+                                    <Ionicons name="ios-water" size={20} color="#fec894" />
                                 </View>
-                                {
-                                    fontLoaded ? checkSensors(el):null
-                                }
-                                
+                                <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense.humidity}</Text>
+                                <Text style={{position:"absolute", right:10,top:70}}>%</Text>
+                                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[0]}</Text>
                             </TouchableOpacity>
-                        )
-                    })
-                }
-                
+                            <TouchableOpacity style={styles.sensorz}>
+                                <View style={{height:30}}>
+                                <Ionicons name="ios-home" size={20} color="#fec894" /> 
+                                </View>
+                                <Text style={{fontSize:10, fontFamily:"neo-sans-medium", position:"absolute",right:40,top:105}}>Unlock</Text>
+                                <MaterialCommunityIcons name="home-lock" size={70} color="black" style={{position:"absolute",right:20,top:40}} />
+                                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>Door</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.sensorz}>
+                                <View style={{height:30}}>
+                                    <MaterialCommunityIcons name="thermometer" size={20} color="#fec894" /> 
+                                </View>
+                                <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense.temperature}  </Text>
+                                <MaterialCommunityIcons name="temperature-celsius" size={15} color="black" style={{position:"absolute",right:10,top:70}} />
+                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[1]}</Text>
+                            </TouchableOpacity>
+                </>:<ActivityIndicator size="large" color="#fec894" />}
+
+
+
             </View>
         </View>
     )
@@ -229,7 +226,6 @@ const styles = StyleSheet.create({
     container: {
         flex:1,
         backgroundColor:"#f9f9f9",
-        marginTop:Constants.statusBarHeight
     },
     upBox: {
         height: "20%",

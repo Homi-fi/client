@@ -4,6 +4,7 @@ import { Lamp } from '../../apis/firebase'
 import * as Font from 'expo-font'
 import Constant from 'expo-constants'
 import Item from './item'
+import {StatusBar} from 'react-native'
 
 // import * as Permissions from 'expo-permissions'
 // import { BarCodeScanner } from 'expo-barcode-scanner'
@@ -64,6 +65,7 @@ export default (props) => {
 
   return (
     <Container>
+      <StatusBar backgroundColor="#fec894" barStyle="dark-content" />
       <HeadingCont>
         <Heading style={{fontFamily:"neo-sans-medium"}}>Living Room</Heading>
       </HeadingCont>
@@ -84,7 +86,6 @@ const Container = styled.View`
   flex: 1;
   background-color: #f9f9f9;
   color: #fec894;
-  margin-top: ${Constant.statusBarHeight};
 `
 
 const HeadingCont = styled.View`
