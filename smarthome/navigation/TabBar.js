@@ -23,7 +23,7 @@ const Scaler = posed.View({
 const S = StyleSheet.create({
   container: {
     flexDirection: "row",
-    height: 52,
+    height: 90,
     elevation: 2,
     alignItems: "center",
     backgroundColor:"#f9f9f9"

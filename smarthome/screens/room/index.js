@@ -11,6 +11,7 @@ import { DeviceMotion } from 'expo-sensors';
 
 
 function Rooms(props){
+    const [change, setchange] = useState(false)
     const [hasCameraPermission, setCameraPermission] =  useState(null)
     const [mydoor, setDoor] = useState(null)
     const [scanned, setScanned] = useState(false)
@@ -29,13 +30,14 @@ function Rooms(props){
               DeviceMotion.removeAllListeners()
             }
           );
-        props.navigation.addListener(
-            'didFocus',
-            payload => {
-              shakeListener()
-            }
-          );
+        // props.navigation.addListener(
+        //     'didFocus',
+        //     payload => {
+        //       shakeListener()
+        //     }
+        //   );
     },[])
+
 
     const checkDoor = () => {
         Door
@@ -62,7 +64,6 @@ function Rooms(props){
             status: changeMe
         })
         .then((data) => {
-            Alert.alert('Success!', 'Successfully updated your door!')
         })
         .catch((error)=>{
             Alert.alert('Error!', 'Failed to update your door!')
@@ -87,7 +88,30 @@ function Rooms(props){
           );
     }
 
-    const shakeListener = () => {
+
+    // const shakeListener =  () => {
+    //     DeviceMotion.addListener((data)=>{
+    //         if(data.acceleration["x"] > 10){
+    //             if(!modalVisible && !change){
+    //                     Alert.alert(
+    //                         'Scan Barcode',
+    //                         'Do you really want to Scan a Barcode?',
+    //                         [
+    //                           {
+    //                             text: 'Cancel',
+    //                             onPress: () => {setchange(true)},
+    //                             style: 'cancel',
+    //                           },
+    //                           {text: 'OK', onPress: () => {setModalVisible(true)}},
+    //                         ],
+    //                         {cancelable: false},
+    //                       );
+    //             }
+    //         }
+    //     })
+    // }
+
+        const shakeListener =  () => {
         DeviceMotion.addListener((data)=>{
             if(data.acceleration["x"] > 10){
                 setModalVisible(true)
@@ -95,9 +119,10 @@ function Rooms(props){
         })
     }
 
+    
+
 
     const getName = async() => {
-
         let name = await AsyncStorage.getItem('name')
         setMyName(name)
     }
@@ -175,9 +200,28 @@ function Rooms(props){
         setModalVisible(true)
     }
 
+    const closeModal = () =>{
+        setModalVisible(false)
+    }
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true)
-        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        if(data == 'Please Open the Door'){
+            Door
+            .doc('ogwpJEM8Ekn9JiKtYogA')
+            .update({
+                status: true
+            })
+            .then((data) => {
+                setModalVisible(false)
+            })
+            .catch((error)=>{
+                Alert.alert('Error!', 'Failed to update your door!')
+            })
+            
+            
+        }else{
+            Alert.alert(`Please Scan the right QRcode`)
+        }
       }
 
 
@@ -198,7 +242,7 @@ function Rooms(props){
       <View style={{width:"90%",alignItems:"flex-start"}}> 
           <TouchableOpacity
               onPress={() => {
-              setModalVisible(false);
+                closeModal()
             }}>
               <AntDesign name="closecircleo" size={30} color="#fec894"/>
           </TouchableOpacity>
@@ -275,7 +319,7 @@ function Rooms(props){
                                 </View>
                                 <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense.temperature}  </Text>
                                 <MaterialCommunityIcons name="temperature-celsius" size={15} color="black" style={{position:"absolute",right:10,top:70}} />
-                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[1]}</Text>
+                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[2]}</Text>
                             </TouchableOpacity>
                 </>:null}
 
