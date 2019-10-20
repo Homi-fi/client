@@ -40,7 +40,7 @@ export default (props) => {
     const changeDay = (id, val) => { 
         Lamp.doc(id).update({night: val})
         .then(function() {
-            console.log("Document successfully updated!");
+            // console.log("Document successfully updated!");
         })
         .catch(function(error) {
             // The document probably doesn't exist.
@@ -48,10 +48,10 @@ export default (props) => {
         });
     } 
     const changeDayAuto = (id, val) => {
-        console.log(id, val,'<<<<<<<<<<')
+        // console.log(id, val,'<<<<<<<<<<')
         Lamp.doc(id).update({ nightAuto: val })
         .then(function() {
-            console.log("Document successfully updated!");
+            // console.log("Document successfully updated!");
         })
         .catch(function(error) {
             // The document probably doesn't exist.
