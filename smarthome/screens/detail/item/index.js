@@ -6,7 +6,7 @@ import { Lamp } from '../../../apis/firebase'
 export default (props) => {
   const { item, navigation } = props
 
-  const [isOn, setIsOn] = useState(false)
+  const [isOn, setIsOn] = useState(item.status)
 
   const toggleHandler = async () => {
     setIsOn(!isOn)
@@ -21,10 +21,10 @@ export default (props) => {
   const modalHandler = () => {
     navigation.navigate('Modal')
   }
-  
+
   return (
     <Container onPress={modalHandler}>
-      <ItemName style={{fontFamily:"neo-sans-medium"}}>{item.name}</ItemName>
+      <ItemName style={{ fontFamily: "neo-sans-medium" }}>{item.name}</ItemName>
       <ToggleSwitch
         isOn={isOn}
         onColor="#fec894"

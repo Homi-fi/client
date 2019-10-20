@@ -20,30 +20,33 @@ const DetailStack = createStackNavigator({
   }
 })
 
-DetailStack.navigationOptions = ({ navigation }) => {
+
+const RoomStack = createStackNavigator({
+  Room: {
+    screen: RoomScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
+  Detail: {
+    screen: DetailStack,
+    navigationOptions: {
+      header: null
+    }
+  }
+}, {
+  // initialRouteName: 'Detail'
+})
+
+RoomStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
-  if (navigation.state.index > 0 && navigation.state.routes[1].routeName === "Modal") {
+  if (navigation.state.index > 0 && navigation.state.routes[1].routeName === "Detail") {
     tabBarVisible = false;
   }
   return {
     tabBarVisible,
   }
 }
-
-const RoomStack = createStackNavigator({
-  Room: {
-      screen:RoomScreen,
-      navigationOptions: {
-        header:null
-      }
-  },
-  Detail: {
-    screen: DetailStack,
-    navigationOptions: {
-      header:null
-    }
-},
-})
 
 const SchedulerStack = createStackNavigator({
   Scheduler: {
@@ -67,8 +70,8 @@ const TabNavigator = createBottomTabNavigator({
 
 const switchNav = createSwitchNavigator({
   App: TabNavigator,
-  LandingPage:Login,
-  
+  LandingPage: Login,
+
 })
 
 export default createAppContainer(switchNav)
