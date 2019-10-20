@@ -1,60 +1,31 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Lamp } from '../../apis/firebase'
-import * as Font from 'expo-font'
-import Constant from 'expo-constants'
+import { Lamp, Room } from '../../apis/firebase'
+import { StatusBar, ActivityIndicator } from 'react-native'
 import Item from './item'
-import {StatusBar} from 'react-native'
-
-// import * as Permissions from 'expo-permissions'
-// import { BarCodeScanner } from 'expo-barcode-scanner'
 
 export default (props) => {
   const { navigation } = props
-  const [fontLoaded, setFont] = useState(false)
+  const { navigation: { state: { params: { roomId } } } } = props
   const [lamps, setLamps] = useState([])
-
-
-  // barcode
-
-  // const [hasCameraPermission, setCameraPermission] = useState(null)
-  // const [scanned, setScanned] = useState(false)
-
-  // const getPermissionsAsync = async () => {
-  //   const { status } = await Permissions.askAsync(Permissions.CAMERA)
-  //   setCameraPermission({ hasCameraPermission: status === 'granted' })
-  // }
-
-  // const handleBarCodeScanned = ({ type, data }) => {
-  //   setScanned(true);
-  //   alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  // }
-
-  // useEffect(() => {
-  //   getPermissionsAsync()
-  // }, [])
+  const [roomName, setRoomName] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     (async () => {
       try {
-        await Font.loadAsync({ 'neo-sans-medium': require('../../assets/NeoSansMedium.otf') })
-        setFont(true)
-      } catch (err) {
-        console.log(err)
-      }
-    })()
-  }, [])
-
-  useEffect(() => {
-    (async () => {
-      try {
-        await Lamp.where('userId', '==', '123').onSnapshot((querySnapshot) => {
+        await Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
           const lamps = []
           querySnapshot.forEach((doc) => {
             lamps.push({ id: doc.id, ...doc.data() })
           })
           setLamps(lamps)
         })
+
+        await Room.doc(roomId).get().then(doc => {
+          setRoomName(doc.data().name)
+        })
+        setIsLoading(false)
       } catch (err) {
         console.log(err)
       }
@@ -62,30 +33,55 @@ export default (props) => {
   }, [])
 
   const data = [{ name: 'Lampu 1', status: false }, { name: 'Lampu 2', status: true }]
+  const image = {
+    Bedroom: 'https://images.unsplash.com/photo-1536349788264-1b816db3cc13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80',
+    'Living Room': 'https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'
+  }
 
-  return (
-    <Container>
-      <StatusBar backgroundColor="#fec894" barStyle="dark-content" />
-      <HeadingCont>
-        <Heading style={{fontFamily:"neo-sans-medium"}}>Living Room</Heading>
-      </HeadingCont>
-      <ListCont>
-        {/* <BarCodeScanner onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} style={{ height: 500, backgroundColor: 'red' }} /> */}
-        {
-          lamps.length > 0 && lamps.map((item, i) => {
-            return <Item item={item} navigation={navigation} key={i} />
-          })
-        }
-      </ListCont>
-    </Container>
-  )
+  if (isLoading)
+    return (
+      <Container style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#fec894" />
+      </Container>
+    )
+  else {
+    return (
+      <Container>
+        <StatusBar backgroundColor="#fec894" barStyle="dark-content" />
+        <HeadingCont>
+          <Heading style={{ fontFamily: "neo-sans-medium" }}>{roomName}</Heading>
+          <Img source={{ uri: image[roomName] }} />
+        </HeadingCont>
+        <ListCont>
+          {
+            lamps.length > 0 ?
+              lamps.map((item, i) => {
+                return <Item item={item} navigation={navigation} key={i} />
+              })
+              :
+              (
+                <Cont>
+                  <Txt>There's no item to shown</Txt>
+                </Cont>
+              )
+          }
+        </ListCont>
+      </Container>
+    )
+  }
 }
 
 
 const Container = styled.View`
   flex: 1;
   background-color: #f9f9f9;
-  color: #fec894;
+`
+
+const Cont = styled.View`
+  flex: 1;
+  background-color: #f9f9f9;
+  justify-content: center;
+  align-items: center;
 `
 
 const HeadingCont = styled.View`
@@ -100,7 +96,7 @@ const HeadingCont = styled.View`
 const Heading = styled.Text`
   font-size: 35;
   color: #fff;
-  margin-bottom: 50;
+  margin-bottom: 40;
   font-weight: 600;
 `
 
@@ -112,5 +108,15 @@ const ListCont = styled.View`
   border-top-right-radius: 30;
   margin-top: -60;
 `
+const Img = styled.Image`
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  resize-mode: cover;
+  z-index: -1;
+`
 
-
+const Txt = styled.Text`
+  font-size: 16;
+  color: silver;
+`
