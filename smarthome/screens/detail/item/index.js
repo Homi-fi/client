@@ -12,8 +12,8 @@ export default (props) => {
   const toggleHandler = async () => {
     if(item.day || item.night){
       Alert.alert(
-        'This lamp is using light sensor',
-        'Clicking ok will turn them off',
+        'Light sensor warning',
+        'This lamp is using day or night feature. Clicking OK will turn them off',
         [
           {
             text: 'Cancel',
