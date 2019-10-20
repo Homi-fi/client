@@ -22,7 +22,6 @@ function Rooms(props){
     const [modalVisible, setModalVisible] = useState(false)
 
     useEffect(()=>{
-        shakeListener()
         checkDoor()
         props.navigation.addListener(
             'didBlur',
@@ -30,12 +29,12 @@ function Rooms(props){
               DeviceMotion.removeAllListeners()
             }
           );
-        // props.navigation.addListener(
-        //     'didFocus',
-        //     payload => {
-        //       shakeListener()
-        //     }
-        //   );
+        props.navigation.addListener(
+            'didFocus',
+            payload => {
+              shakeListener()
+            }
+          );
     },[])
 
 
