@@ -37,7 +37,7 @@ export default (props) => {
       setOnTime({ hours: inputHours, minutes: inputMinutes })
       try {
         await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: inputHours, minutes: inputMinutes } })
-        dispatch(cronOn(inputHours, inputMinutes, item.name))
+        dispatch(cronOn(inputHours, inputMinutes, item.name + '-on'))
       } catch (err) {
         console.log(err)
       }
@@ -45,7 +45,7 @@ export default (props) => {
       setOffTime({ hours: inputHours, minutes: inputMinutes })
       try {
         await Lamp.doc(item.id).update({ offScheduler: { status: true, hours: inputHours, minutes: inputMinutes } })
-        dispatch(cronOn(inputHours, inputMinutes, item.name))
+        dispatch(cronOn(inputHours, inputMinutes, item.name + '-off'))
       } catch (err) {
         console.log(err)
       }
@@ -59,14 +59,14 @@ export default (props) => {
       if (!onToggle) {
         try {
           await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
-          dispatch(cronOn(onTime.hours, onTime.minutes, item.name))
+          dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
         } catch (err) {
           console.log(err)
         }
       } else {
         try {
           await Lamp.doc(item.id).update({ onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
-          dispatch(cronOff(item.name))
+          dispatch(cronOff(item.name + '-on'))
         } catch (err) {
           console.log(err)
         }
@@ -77,14 +77,14 @@ export default (props) => {
       if (!offToggle) {
         try {
           await Lamp.doc(item.id).update({ offScheduler: { status: true, hours: offTime.hours, minutes: offTime.minutes } })
-          dispatch(cronOn(offTime.hours, offTime.minutes, item.name))
+          dispatch(cronOn(offTime.hours, offTime.minutes, item.name + '-off'))
         } catch (err) {
           console.log(err)
         }
       } else {
         try {
           await Lamp.doc(item.id).update({ offScheduler: { status: false, hours: offTime.hours, minutes: offTime.minutes } })
-          dispatch(cronOff(item.name))
+          dispatch(cronOff(item.name + '-off'))
         } catch (err) {
           console.log(err)
         }

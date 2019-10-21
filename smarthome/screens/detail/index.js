@@ -11,28 +11,49 @@ export default (props) => {
   const [roomName, setRoomName] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
-          const lamps = []
-          querySnapshot.forEach((doc) => {
-            lamps.push({ id: doc.id, ...doc.data() })
-          })
-          setLamps(lamps)
-        })
+  // useEffect(() => {
+  //   (async () => {
+  //     let isSubscribed = true
+  //     try {
+  //       const unsubscribe = await Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
+  //         const lamps = []
+  //         querySnapshot.forEach((doc) => {
+  //           lamps.push({ id: doc.id, ...doc.data() })
+  //         })
+  //         if (isSubscribed) setLamps(lamps)
+  //       })
 
-        await Room.doc(roomId).get().then(doc => {
-          setRoomName(doc.data().name)
-        })
-        setIsLoading(false)
-      } catch (err) {
-        console.log(err)
-      }
-    })()
+  //       await Room.doc(roomId).get().then(doc => {
+  //         if (isSubscribed) setRoomName(doc.data().name)
+  //       })
+
+  //       setIsLoading(false)
+  //       return () => unsubscribe()
+  //     } catch (err) {
+  //       console.log(err)
+  //     }
+  //   })()
+  // }, [])
+
+  useEffect(() => {
+    let isSubscribed = true
+
+    const unsubscribe = Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
+      const lamps = []
+      querySnapshot.forEach((doc) => {
+        lamps.push({ id: doc.id, ...doc.data() })
+      })
+      if (isSubscribed) setLamps(lamps)
+    })
+
+    Room.doc(roomId).get().then(doc => {
+      if (isSubscribed) setRoomName(doc.data().name)
+      setIsLoading(false)
+    })
+
+    return () => unsubscribe()
   }, [])
 
-  const data = [{ name: 'Lampu 1', status: false }, { name: 'Lampu 2', status: true }]
   const image = {
     Bedroom: 'https://images.unsplash.com/photo-1536349788264-1b816db3cc13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80',
     'Living Room': 'https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'
