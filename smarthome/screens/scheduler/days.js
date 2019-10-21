@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, StatusBar, ActivityIndicator, Dimensions, TouchableOpacity} from 'react-native'
+import {View, Text, StatusBar, Dimensions, TouchableOpacity} from 'react-native'
 import Constants from 'expo-constants';
 import {Lamp} from '../../apis/firebase'
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -13,24 +13,8 @@ const screenHeight = Math.round(Dimensions.get('window').height);
 export default (props) => {
     const modal = props.modal
     const [fontLoaded, setFont] = useState(false)
-    const [lamps, setLamps] = useState([])
-    const [loading, setLoading] = useState(true)
-    let unsubscribe = null
-
-    const fetchLamp = () => {
-        unsubscribe = Lamp.where("userId", "==", "123")
-        .onSnapshot(function(querySnapshot) {
-            const newLamps = []
-            querySnapshot.forEach(function(doc) {
-                newLamps.push({
-                    id: doc.id,
-                    ...doc.data()
-                })
-            })
-            setLamps(newLamps)
-            setLoading(false)
-        });
-    }
+    const lamps = props.lamps
+   
     useEffect(()=>{
         Font.loadAsync({
           'neo-sans-medium': require('../../assets/NeoSansMedium.otf'),
@@ -59,55 +43,44 @@ export default (props) => {
             console.error("Error updating document: ", error);
         });
     }
-    useEffect(() => {
-        return () => {
-          unsubscribe()
-        };
-      }, []);
-    useEffect(() => {
-        fetchLamp()
-    },[])
     return (
         <>
             <StatusBar barStyle={'dark-content'} />
             <View style={{flex: 1, backgroundColor: '#f9f9f9'}}>
                 <View style={{marginTop: Constants.statusBarHeight + (screenHeight*0.07), flex: 1, alignItems: 'center', width: '100%'}}>
+
                     {
-                        loading ? <ActivityIndicator size="small" color="#e8d296"/> :
-                        <>
-                            {
-                                lamps.map(lamp => {
-                                    let shadow = null
-                                    let labelAuto = ""
-                                    lamp.dayAuto ? labelAuto = "Auto on" : labelAuto = "Auto off"
-                                    lamp.status ? shadow = "#fec894" : shadow = '#000'
-                                    
-                                    return (
-                                        <TouchableOpacity key={lamp.id} onPress={() => {
-                                                changeDayAuto(lamp.id, !lamp.dayAuto)
-                                            }
-                                        }>
-                                            <View style={[styles.menu, {shadowColor: shadow}]}>
-                                                <Text style={styles.text}>{lamp.name}</Text>
-                                                <ToggleSwitch
-                                                    label={labelAuto}
-                                                    isOn={lamp.day}
-                                                    labelStyle={{color: 'silver', fontFamily:"neo-sans-medium"}}
-                                                    onColor="#fec894"
-                                                    offColor="#ecf0f1"
-                                                    size="medium"
-                                                    onToggle={isOn => changeDay(lamp.id, isOn)}
-                                                />
-                                            </View>
-                                        </TouchableOpacity>
-                                    )
-                                })
-                            }
-                            <View style={{padding: 30}}>
-                                <Text style={{color: 'silver', textAlign: 'center'}}>When the sun rises. All the selected devices will be turned on or off</Text>
-                            </View>
-                        </>
-                    }   
+                        lamps.map(lamp => {
+                            let shadow = null
+                            let labelAuto = ""
+                            lamp.dayAuto ? labelAuto = "Auto on" : labelAuto = "Auto off"
+                            lamp.status ? shadow = "#fec894" : shadow = '#000'
+                            
+                            return (
+                                <TouchableOpacity key={lamp.id} onPress={() => {
+                                        changeDayAuto(lamp.id, !lamp.dayAuto)
+                                    }
+                                }>
+                                    <View style={[styles.menu, {shadowColor: shadow}]}>
+                                        <Text style={styles.text}>{lamp.name}</Text>
+                                        <ToggleSwitch
+                                            label={labelAuto}
+                                            isOn={lamp.day}
+                                            labelStyle={{color: 'silver', fontFamily:"neo-sans-medium"}}
+                                            onColor="#fec894"
+                                            offColor="#ecf0f1"
+                                            size="medium"
+                                            onToggle={isOn => changeDay(lamp.id, isOn)}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+                    <View style={{padding: 30}}>
+                        <Text style={{color: 'silver', textAlign: 'center'}}>When the sun rises. All the selected devices will be turned on or off</Text>
+                    </View>
+
                     <TouchableOpacity style={{
                         position: "absolute",
                         bottom: 80,}} 
