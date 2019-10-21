@@ -249,6 +249,52 @@ export default (props) => {
     </Container>
   )
 
+<<<<<<< HEAD
+=======
+          <TimePicker
+            isVisible={modal}
+            mode="time"
+            locale={'en_GB'}
+            // is24Hour={true}
+            onConfirm={data => {
+              timeHandler(data.getHours(), data.getMinutes(), timeMode)
+              setModal(false)
+            }}
+            onCancel={() => setModal(false)}
+          />
+        </BotPart>
+        {/* <View style={{ flex: 0.2, alignItems: 'center' }}> */}
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              bottom: 80,
+            }}
+            onPress={() => {
+              tutup(false)
+            }}>
+            <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 60, height: 60,
+              borderRadius: 100,
+              backgroundColor: 'white',
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}>
+              <Feather name="x" size={30} color="#383838" />
+            </View>
+          </TouchableOpacity>
+        {/* </View> */}
+      </Container>
+    )
+  }
+>>>>>>> c791d241477a3cf705add395afd5f07afafdde5b
 }
 
 const radius = 20;
@@ -287,15 +333,14 @@ const BotPart = styled.View`
   flex: 0.3;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  padding: 15px 7px;
+  justify-content: space-between;
+  width: 88%;
   
 `
 
 const Box = styled.View`
   width: ${screenWidth * 0.4};
   height: ${screenWidth * 0.4};
-  margin-right: 15;
 `
 
 const OnOffCont = styled.View`
