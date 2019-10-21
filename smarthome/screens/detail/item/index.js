@@ -6,11 +6,9 @@ import { Alert, Modal } from 'react-native'
 import ModalItem from '../modal'
 
 export default (props) => {
-  const { item, navigation } = props
-  // const [isOn, setIsOn] = useState(item.status)
+  const { item } = props
   const [modal, setModal] = useState(false)
 
-  // console.log(item, 'ini item cuy')
 
   const toggleHandler = async () => {
     if (item.day || item.night) {
@@ -27,7 +25,6 @@ export default (props) => {
             text: 'OK', onPress: async () => {
               try {
                 await Lamp.doc(item.id).update({ day: false, night: false, status: !item.status })
-                // setIsOn(!isOn)
               } catch (err) {
                 console.log(err)
               }
@@ -38,7 +35,6 @@ export default (props) => {
       );
     }
     else {
-      // setIsOn(!isOn)
       try {
         await Lamp.doc(item.id).update({ status: !item.status })
       } catch (err) {
@@ -48,7 +44,6 @@ export default (props) => {
   }
 
   const modalHandler = () => {
-    // navigation.navigate('Modal', { item: item })
     setModal(true)
   }
 
@@ -69,8 +64,7 @@ export default (props) => {
         transparent={false}
         visible={modal}
       >
-        {/* <Days lamps={lamps} modal={setDayModal} /> */}
-        <ModalItem item={item} tutup={setModal}/>
+        <ModalItem item={item} tutup={setModal} />
       </Modal>
     </>
   )
