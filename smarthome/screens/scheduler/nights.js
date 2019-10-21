@@ -91,7 +91,7 @@ export default (props) => {
                             justifyContent: 'center',
                             alignItems: 'center',
                             width:60, height: 60, 
-                            borderRadius: '100', 
+                            borderRadius: 100, 
                             backgroundColor: 'white',
                             shadowColor: "#000",
                             shadowOffset: {
