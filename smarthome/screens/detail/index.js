@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Lamp, Room } from '../../apis/firebase'
-import { StatusBar, ActivityIndicator, TouchableOpacity, View} from 'react-native'
+import { StatusBar, ActivityIndicator, TouchableOpacity, View } from 'react-native'
 import Item from './item'
 import { Feather } from '@expo/vector-icons';
 
@@ -70,10 +70,12 @@ export default (props) => {
     return (
       <Container>
         <StatusBar backgroundColor="#fec894" barStyle="dark-content" />
+
         <HeadingCont>
           <Heading style={{ fontFamily: "neo-sans-medium" }}>{roomName}</Heading>
           <Img source={{ uri: image[roomName] }} />
         </HeadingCont>
+
         <ListCont>
           {
             lamps.length > 0 ?
@@ -88,30 +90,33 @@ export default (props) => {
               )
           }
         </ListCont>
-        <View style={{flex: 0.2, alignItems: 'center'}}>
-          <TouchableOpacity 
+        
+        <View style={{ flex: 0.2, alignItems: 'center' }}>
+          <TouchableOpacity
             style={{
               position: "absolute",
-              bottom: 80,}} 
-              onPress={()=> {
-                navigation.navigate('Room')
-              }}>
-              <View style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width:60, height: 60, 
-                  borderRadius: '100', 
-                  backgroundColor: 'white',
-                  shadowColor: "#000",
-                  shadowOffset: {
-                      width: 0,
-                      height: 2,
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3.84,
-                  elevation: 5,}}>
-                  <Feather name="x" size={30} color="#383838" />
-              </View>
+              bottom: 80,
+            }}
+            onPress={() => {
+              navigation.navigate('Room')
+            }}>
+            <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 60, height: 60,
+              borderRadius: 100,
+              backgroundColor: 'white',
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}>
+              <Feather name="x" size={30} color="#383838" />
+            </View>
           </TouchableOpacity>
         </View>
       </Container>
@@ -135,8 +140,8 @@ const Cont = styled.View`
 const HeadingCont = styled.View`
   flex: 0.3;
   background-color: #fec894;
-  border-bottom-left-radius: 30;
-  border-bottom-right-radius: 30;
+  border-bottom-left-radius: 15;
+  border-bottom-right-radius: 15;
   justify-content: center;
   align-items: center;
 `
@@ -148,11 +153,11 @@ const Heading = styled.Text`
 `
 
 const ListCont = styled.View`
-  flex: 0.7;
+  flex: 0.5;
   padding: 30px;
   background-color: #f9f9f9;
-  border-top-left-radius: 30;
-  border-top-right-radius: 30;
+  border-top-left-radius: 15;
+  border-top-right-radius: 15;
   margin-top: -60;
 `
 const Img = styled.Image`

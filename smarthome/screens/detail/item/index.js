@@ -63,10 +63,10 @@ export default (props) => {
 }
 
 const Container = styled.TouchableOpacity`
-  height: 50;
+  height: 80;
   width: 100%;
   background-color: #fff;
-  border-radius: 30;
+  border-radius: 15;
   elevation: 3;
   justify-content: space-between;
   padding: 0 20px;
@@ -76,5 +76,5 @@ const Container = styled.TouchableOpacity`
 
 const ItemName = styled.Text`
   font-size: 20;
-  line-height: 50;
+  line-height: 80;
 `
