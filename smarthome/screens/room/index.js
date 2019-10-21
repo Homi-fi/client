@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import { Image,View, StyleSheet, TouchableOpacity,Text, AsyncStorage, Alert, Modal, ActivityIndicator,StatusBar} from 'react-native'
 import * as Font from 'expo-font';
-import { Sensor, Room, Door } from '../../apis/firebase'
+import { Notifications } from 'expo';
+import { Sensor, Room, Door,User } from '../../apis/firebase'
 import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { DeviceMotion } from 'expo-sensors';
+import axios from 'axios'
 
 
 
@@ -20,8 +22,77 @@ function Rooms(props){
     const [roomies, setRooms] = useState([])
     const [sense, setSense] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
+    // const [myToken, setToken] = useState('')
+    const [temp, setTemp] = useState(null)
+    const [notification, setNotification] = useState(null)
+
+
+    const registerForPushNotificationsAsync = async () => {
+          const { status: existingStatus } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+          );
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(
+              Permissions.NOTIFICATIONS
+            );
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          let token = await Notifications.getExpoPushTokenAsync();
+          User
+          .doc('user1')
+          .update({
+              expoToken: token
+          }).then(()=>{
+
+          }).catch(error => {
+              Alert.alert('Fail to add Token')
+          })
+          
+      };
 
     useEffect(()=>{
+        if(temp > 40){
+            sendPushNotification()
+        }
+    },[temp])
+    const sendPushNotification = async () => {
+        User
+        .doc('user1')
+        .get()
+        .then(async function(doc){
+            let myToken = doc.data().expoToken
+            const message = {
+                to: myToken,
+                sound: 'default',
+                title: 'Alert!',
+                body: 'Your House is on fire!!!' ,
+                data: { data: 'goes here' },
+              };
+              const response = await axios({
+                url:'https://exp.host/--/api/v2/push/send',
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Accept-encoding': 'gzip, deflate',
+                  'Content-Type': 'application/json',
+                },
+                data: JSON.stringify(message),
+              });
+        })
+    }
+
+    
+
+    useEffect(()=>{
+        Notifications.addListener((notification)=>{
+            setNotification(notification)
+        });
+        registerForPushNotificationsAsync()
         checkDoor()
         props.navigation.addListener(
             'didBlur',
@@ -164,11 +235,12 @@ function Rooms(props){
       useEffect(()=>{
           Sensor
         .onSnapshot(function(querySnapshot) {
-            var sensors = [];
+            let sensors = [];
             querySnapshot.forEach(function(doc) {
                 sensors.push(doc.data());
             });
             setSense(sensors[0])
+            setTemp(sensors[0].temperature)
         });
       },[])
 

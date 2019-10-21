@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react'
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native'
+import {View, Text, Image, StyleSheet, TouchableOpacity, ImageBackground} from 'react-native'
 import {useDispatch} from 'react-redux'
 import welcome from '../../assets/rumah_baru.png'
 import Constants from 'expo-constants';
@@ -7,6 +7,7 @@ import * as Font from 'expo-font';
 import Swiper from 'react-native-swiper'
 import {Form, Item, Label, Input,Button,Icon} from 'native-base'
 import {register, signin} from '../../store/action'
+import back from '../../assets/backlogin.png'
 
 export default (props) => {
     const dispatch = useDispatch()
@@ -50,7 +51,8 @@ export default (props) => {
       },[])
 
   return (
-    <View style={styles.container}>
+    // <View style={styles.container}>
+    <ImageBackground source={back} style={{width:"100%", height:"100%"}}>
         <View style={styles.top}>
          <Image source={welcome} style={{width:300, height:300, resizeMode:"contain"}}></Image>
         </View>
@@ -109,8 +111,7 @@ export default (props) => {
             }
         </View>
         </Swiper>
-
-    </View>
+        </ImageBackground>
   )
 }
 
