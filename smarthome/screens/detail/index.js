@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Lamp, Room } from '../../apis/firebase'
-import { StatusBar, ActivityIndicator } from 'react-native'
+import { StatusBar, ActivityIndicator, TouchableOpacity, View} from 'react-native'
 import Item from './item'
+import { Feather } from '@expo/vector-icons';
 
 export default (props) => {
   const { navigation } = props
@@ -11,28 +12,49 @@ export default (props) => {
   const [roomName, setRoomName] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
-          const lamps = []
-          querySnapshot.forEach((doc) => {
-            lamps.push({ id: doc.id, ...doc.data() })
-          })
-          setLamps(lamps)
-        })
+  // useEffect(() => {
+  //   (async () => {
+  //     let isSubscribed = true
+  //     try {
+  //       const unsubscribe = await Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
+  //         const lamps = []
+  //         querySnapshot.forEach((doc) => {
+  //           lamps.push({ id: doc.id, ...doc.data() })
+  //         })
+  //         if (isSubscribed) setLamps(lamps)
+  //       })
 
-        await Room.doc(roomId).get().then(doc => {
-          setRoomName(doc.data().name)
-        })
-        setIsLoading(false)
-      } catch (err) {
-        console.log(err)
-      }
-    })()
+  //       await Room.doc(roomId).get().then(doc => {
+  //         if (isSubscribed) setRoomName(doc.data().name)
+  //       })
+
+  //       setIsLoading(false)
+  //       return () => unsubscribe()
+  //     } catch (err) {
+  //       console.log(err)
+  //     }
+  //   })()
+  // }, [])
+
+  useEffect(() => {
+    let isSubscribed = true
+
+    const unsubscribe = Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
+      const lamps = []
+      querySnapshot.forEach((doc) => {
+        lamps.push({ id: doc.id, ...doc.data() })
+      })
+      if (isSubscribed) setLamps(lamps)
+    })
+
+    Room.doc(roomId).get().then(doc => {
+      if (isSubscribed) setRoomName(doc.data().name)
+      setIsLoading(false)
+    })
+
+    return () => unsubscribe()
   }, [])
 
-  const data = [{ name: 'Lampu 1', status: false }, { name: 'Lampu 2', status: true }]
   const image = {
     Bedroom: 'https://images.unsplash.com/photo-1536349788264-1b816db3cc13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80',
     'Living Room': 'https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'
@@ -66,6 +88,32 @@ export default (props) => {
               )
           }
         </ListCont>
+        <View style={{flex: 0.2, alignItems: 'center'}}>
+          <TouchableOpacity 
+            style={{
+              position: "absolute",
+              bottom: 80,}} 
+              onPress={()=> {
+                navigation.navigate('Room')
+              }}>
+              <View style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width:60, height: 60, 
+                  borderRadius: '100', 
+                  backgroundColor: 'white',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                      width: 0,
+                      height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5,}}>
+                  <Feather name="x" size={30} color="#383838" />
+              </View>
+          </TouchableOpacity>
+        </View>
       </Container>
     )
   }

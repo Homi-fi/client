@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import ToggleSwitch from 'toggle-switch-react-native'
 import { Lamp } from '../../../apis/firebase'
-import {Alert} from 'react-native'
+import { Alert } from 'react-native'
 
 export default (props) => {
   const { item, navigation } = props
@@ -10,7 +10,7 @@ export default (props) => {
   const [isOn, setIsOn] = useState(item.status)
 
   const toggleHandler = async () => {
-    if(item.day || item.night){
+    if (item.day || item.night) {
       Alert.alert(
         'Light sensor warning',
         'This lamp is using day or night feature. Clicking OK will turn them off',
@@ -20,26 +20,28 @@ export default (props) => {
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
           },
-          {text: 'OK', onPress: async () => {
-            try {
-              await Lamp.doc(item.id).update({ day: false, night: false, status: !isOn })
-              setIsOn(!isOn)
-            } catch (err) {
-              console.log(err)
+          {
+            text: 'OK', onPress: async () => {
+              try {
+                await Lamp.doc(item.id).update({ day: false, night: false, status: !isOn })
+                setIsOn(!isOn)
+              } catch (err) {
+                console.log(err)
+              }
             }
-          }},
+          },
         ],
-        {cancelable: false},
-        );
+        { cancelable: false },
+      );
+    }
+    else {
+      setIsOn(!isOn)
+      try {
+        await Lamp.doc(item.id).update({ status: !isOn })
+      } catch (err) {
+        console.log(err)
       }
-      else{
-        setIsOn(!isOn)
-        try {
-          await Lamp.doc(item.id).update({ status: !isOn })
-        } catch (err) {
-          console.log(err)
-        }
-      }
+    }
   }
 
   const modalHandler = () => {

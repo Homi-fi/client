@@ -9,7 +9,7 @@ import ModalDetail from '../screens/detail/modal'
 import RoomScreen from '../screens/room'
 import SchedulerScreen from '../screens/scheduler'
 import Login from '../screens/login'
-import SettingScheduler from '../screens/scheduler/stack'
+import SettingScheduler from '../screens/scheduler/index'
 import  TabBar  from "./TabBar";
 
 const DetailStack = createStackNavigator({
