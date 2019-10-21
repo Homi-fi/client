@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Constant from 'expo-constants'
-import { Dimensions, Alert, ActivityIndicator, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Alert, TouchableOpacity, View } from 'react-native'
 import { Feather } from '@expo/vector-icons';
 
 import TimePicker from 'react-native-modal-datetime-picker'
@@ -12,23 +12,15 @@ import { Ionicons } from '@expo/vector-icons'
 import { useDispatch } from 'react-redux'
 import { cronOn, cronOff } from '../../../store/action'
 import { Lamp } from '../../../apis/firebase'
-import { Item } from 'native-base'
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 export default (props) => {
   const { item, tutup } = props
-  const [isLoading, setIsLoading] = useState(false)
 
   const dispatch = useDispatch()
   const [modal, setModal] = useState(false)
-  const [onTime, setOnTime] = useState({ hours: item.onScheduler.hours, minutes: item.onScheduler.minutes })
-  const [offTime, setOffTime] = useState({ hours: item.offScheduler.hours, minutes: item.offScheduler.minutes })
   const [timeMode, setTimeMode] = useState('on')
-
-  const [onToggle, setOnToggle] = useState(item.onScheduler.status ? true : false)
-  const [offToggle, setOffToggle] = useState(item.offScheduler.status ? true : false)
-
 
   const BtnHandler = mode => () => {
     setTimeMode(mode)
@@ -39,7 +31,6 @@ export default (props) => {
     const inputHours = hours < 10 ? `0${hours}` : (hours + '')
     const inputMinutes = minutes < 10 ? `0${minutes}` : (minutes + '')
     if (status === 'on') {
-      setOnTime({ hours: inputHours, minutes: inputMinutes })
       try {
         await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: inputHours, minutes: inputMinutes } })
         dispatch(cronOn(inputHours, inputMinutes, item.name + '-on'))
@@ -47,7 +38,6 @@ export default (props) => {
         console.log(err)
       }
     } else {
-      setOffTime({ hours: inputHours, minutes: inputMinutes })
       try {
         await Lamp.doc(item.id).update({ offScheduler: { status: true, hours: inputHours, minutes: inputMinutes } })
         dispatch(cronOn(inputHours, inputMinutes, item.name + '-off'))
@@ -59,7 +49,7 @@ export default (props) => {
 
   const toggleHandler = (params) => async () => {
     if (params === 'on') {
-      if(item.day || item.night){
+      if (item.day || item.night) {
         Alert.alert(
           'Light sensor warning',
           'This lamp is using day or night feature. Clicking OK will turn them off',
@@ -71,17 +61,16 @@ export default (props) => {
             },
             {
               text: 'OK', onPress: async () => {
-                setOnToggle(!onToggle)
-                if (!onToggle) {
+                if (!item.onScheduler.status) {
                   try {
-                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
-                    dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
+                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: true, hours: item.onScheduler.hours, minutes: item.onScheduler.minutes } })
+                    dispatch(cronOn(item.onScheduler.hours, item.onScheduler.minutes, item.name + '-on'))
                   } catch (err) {
                     console.log(err)
                   }
                 } else {
                   try {
-                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
+                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: false, hours: item.onScheduler.hours, minutes: item.onScheduler.minutes } })
                     dispatch(cronOff(item.name + '-on'))
                   } catch (err) {
                     console.log(err)
@@ -92,117 +81,176 @@ export default (props) => {
           ],
           { cancelable: false },
         );
-      }else{
-        setOnToggle(!onToggle)
-        if (!onToggle) {
+      } else {
+        if (!item.onScheduler.status) {
           try {
-            await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
-            dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
+            await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: item.onScheduler.hours, minutes: item.onScheduler.minutes } })
+            dispatch(cronOn(item.onScheduler.hours, item.onScheduler.minutes, item.name + '-on'))
           } catch (err) {
             console.log(err)
           }
         } else {
           try {
-            await Lamp.doc(item.id).update({ onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
+            await Lamp.doc(item.id).update({ onScheduler: { status: false, hours: item.onScheduler.hours, minutes: item.onScheduler.minutes } })
             dispatch(cronOff(item.name + '-on'))
           } catch (err) {
             console.log(err)
           }
         }
       }
-      
-      
-    } else {
-      setOffToggle(!offToggle)
 
-      if (!offToggle) {
-        try {
-          await Lamp.doc(item.id).update({ offScheduler: { status: true, hours: offTime.hours, minutes: offTime.minutes } })
-          dispatch(cronOn(offTime.hours, offTime.minutes, item.name + '-off'))
-        } catch (err) {
-          console.log(err)
-        }
+    } else {
+      if (item.day || item.night) {
+        Alert.alert(
+          'Light sensor warning',
+          'This lamp is using day or night feature. Clicking OK will turn them off',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'OK', onPress: async () => {
+                if (!item.offScheduler.status) {
+                  try {
+                    await Lamp.doc(item.id).update({ day: false, night: false, offScheduler: { status: true, hours: item.offScheduler.hours, minutes: item.offScheduler.minutes } })
+                    dispatch(cronOn(item.offScheduler.hours, item.offScheduler.minutes, item.name + '-on'))
+                  } catch (err) {
+                    console.log(err)
+                  }
+                } else {
+                  try {
+                    await Lamp.doc(item.id).update({ day: false, night: false, offScheduler: { status: false, hours: item.offScheduler.hours, minutes: item.offScheduler.minutes } })
+                    dispatch(cronOff(item.name + '-on'))
+                  } catch (err) {
+                    console.log(err)
+                  }
+                }
+              }
+            },
+          ],
+          { cancelable: false },
+        );
       } else {
-        try {
-          await Lamp.doc(item.id).update({ offScheduler: { status: false, hours: offTime.hours, minutes: offTime.minutes } })
-          dispatch(cronOff(item.name + '-off'))
-        } catch (err) {
-          console.log(err)
+        if (!item.offScheduler.status) {
+          try {
+            await Lamp.doc(item.id).update({ offScheduler: { status: true, hours: item.offScheduler.hours, minutes: item.offScheduler.minutes } })
+            dispatch(cronOn(item.offScheduler.hours, item.offScheduler.minutes, item.name + '-off'))
+          } catch (err) {
+            console.log(err)
+          }
+        } else {
+          try {
+            await Lamp.doc(item.id).update({ offScheduler: { status: false, hours: item.offScheduler.hours, minutes: item.offScheduler.minutes } })
+            dispatch(cronOff(item.name + '-off'))
+          } catch (err) {
+            console.log(err)
+          }
         }
       }
     }
   }
 
-  if (isLoading)
-    return (
-      <Container style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color="#fec894" />
-      </Container>
-    )
-  else {
-    return (
-      <Container>
-        {/* <TopPart>
-          <Heading style={{ fontFamily: "neo-sans-medium" }}>{item.name}</Heading>
+  return (
+    <Container>
+      <BotPart style={{ marginTop: 20 }}>
+        <Box style={styless.shadow}>
+          <OnOffCont>
+            <Txt style={{ fontFamily: "neo-sans-medium" }}>On time</Txt>
+            <ToggleSwitch
+              isOn={item.onScheduler.status}
+              onColor="#fec894"
+              offColor="#ecf0f1"
+              size="medium"
+              onToggle={toggleHandler('on')}
+            />
+          </OnOffCont>
 
-        </TopPart> */}
+          <BotCont pointerEvents={item.onScheduler.status ? 'auto' : 'none'} style={{ backgroundColor: item.onScheduler.status ? '#f9f9f9' : '#ecf0f1' }}>
+            {
+              !item.onScheduler.status ?
+                <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
+                :
+                <TimeCont>
+                  <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${item.onScheduler.hours}:${item.onScheduler.minutes}`}</TimeText>
+                  <Btn onPress={BtnHandler('on')}>
+                    <Ionicons name='ios-clock' size={50} color="#fec894" />
+                  </Btn>
+                </TimeCont>
+            }
+          </BotCont>
+        </Box>
 
+        <Box style={styless.shadow}>
+          <OnOffCont>
+            <Txt style={{ fontFamily: "neo-sans-medium" }}>Off time</Txt>
+            <ToggleSwitch
+              isOn={item.offScheduler.status}
+              onColor="#fec894"
+              offColor="#ecf0f1"
+              size="medium"
+              onToggle={toggleHandler('off')}
+            />
+          </OnOffCont>
 
-        <BotPart style={{marginTop: 20}}>
-          <Box style={styless.shadow}>
-            <OnOffCont>
-              <Txt style={{ fontFamily: "neo-sans-medium" }}>On time</Txt>
-              <ToggleSwitch
-                isOn={onToggle}
-                onColor="#fec894"
-                offColor="#ecf0f1"
-                size="medium"
-                onToggle={toggleHandler('on')}
-              />
-            </OnOffCont>
+          <BotCont pointerEvents={item.offScheduler.status ? 'auto' : 'none'} style={{ backgroundColor: item.offScheduler.status ? '#f9f9f9' : '#ecf0f1' }}>
+            {
+              !item.offScheduler.status ?
+                <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
+                :
+                <TimeCont>
+                  <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${item.offScheduler.hours}:${item.offScheduler.minutes}`}</TimeText>
+                  <Btn onPress={BtnHandler('off')}>
+                    <Ionicons name='ios-clock' size={50} color="#fec894" />
+                  </Btn>
+                </TimeCont>
+            }
+          </BotCont>
+        </Box>
 
-            <BotCont pointerEvents={onToggle ? 'auto' : 'none'} style={{ backgroundColor: onToggle ? '#f9f9f9' : '#ecf0f1' }}>
-              {
-                !onToggle ?
-                  <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
-                  :
-                  <TimeCont>
-                    <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${onTime.hours}:${onTime.minutes}`}</TimeText>
-                    <Btn onPress={BtnHandler('on')}>
-                      <Ionicons name='ios-clock' size={50} color="#fec894" />
-                    </Btn>
-                  </TimeCont>
-              }
-            </BotCont>
-          </Box>
+        <TimePicker
+          isVisible={modal}
+          mode="time"
+          locale={'en_GB'}
+          onConfirm={data => {
+            timeHandler(data.getHours(), data.getMinutes(), timeMode)
+            setModal(false)
+          }}
+          onCancel={() => setModal(false)}
+        />
+      </BotPart>
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          bottom: 80,
+        }}
+        onPress={() => {
+          tutup(false)
+        }}>
+        <View style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: 60, height: 60,
+          borderRadius: 100,
+          backgroundColor: 'white',
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+        }}>
+          <Feather name="x" size={30} color="#383838" />
+        </View>
+      </TouchableOpacity>
+    </Container>
+  )
 
-          <Box style={styless.shadow}>
-            <OnOffCont>
-              <Txt style={{ fontFamily: "neo-sans-medium" }}>Off time</Txt>
-              <ToggleSwitch
-                isOn={offToggle}
-                onColor="#fec894"
-                offColor="#ecf0f1"
-                size="medium"
-                onToggle={toggleHandler('off')}
-              />
-            </OnOffCont>
-
-            <BotCont  pointerEvents={offToggle ? 'auto' : 'none'} style={{ backgroundColor: offToggle ? '#f9f9f9' : '#ecf0f1' }}>
-              {
-                !offToggle ?
-                  <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
-                  :
-                  <TimeCont>
-                    <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${offTime.hours}:${offTime.minutes}`}</TimeText>
-                    <Btn onPress={BtnHandler('off')}>
-                      <Ionicons name='ios-clock' size={50} color="#fec894" />
-                    </Btn>
-                  </TimeCont>
-              }
-            </BotCont>
-          </Box>
-
+<<<<<<< HEAD
+=======
           <TimePicker
             isVisible={modal}
             mode="time"
@@ -246,6 +294,7 @@ export default (props) => {
       </Container>
     )
   }
+>>>>>>> c791d241477a3cf705add395afd5f07afafdde5b
 }
 
 const radius = 20;

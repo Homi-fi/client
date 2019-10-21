@@ -12,37 +12,10 @@ export default (props) => {
   const [roomName, setRoomName] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // useEffect(() => {
-  //   (async () => {
-  //     let isSubscribed = true
-  //     try {
-  //       const unsubscribe = await Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
-  //         const lamps = []
-  //         querySnapshot.forEach((doc) => {
-  //           lamps.push({ id: doc.id, ...doc.data() })
-  //         })
-  //         if (isSubscribed) setLamps(lamps)
-  //       })
-
-  //       await Room.doc(roomId).get().then(doc => {
-  //         if (isSubscribed) setRoomName(doc.data().name)
-  //       })
-
-  //       setIsLoading(false)
-  //       return () => unsubscribe()
-  //     } catch (err) {
-  //       console.log(err)
-  //     }
-  //   })()
-  // }, [])
-
   useEffect(() => {
-    let isSubscribed = true
-
     const unsubscribe = Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
       const lamps = []
       querySnapshot.forEach((doc) => {
-        // console.log(doc.data())
         lamps.push({ id: doc.id, ...doc.data() })
       })
       setLamps(lamps)
@@ -81,7 +54,6 @@ export default (props) => {
           {
             lamps.length > 0 ?
               lamps.map((item, i) => {
-                {/* console.log(item) */ }
                 return <Item item={item} navigation={navigation} key={i} />
               })
               :
