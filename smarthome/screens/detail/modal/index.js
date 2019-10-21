@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import Constant from 'expo-constants'
-import { Dimensions } from 'react-native'
+import { Dimensions, Alert } from 'react-native'
 
 import TimePicker from 'react-native-modal-datetime-picker'
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useDispatch } from 'react-redux'
 import { cronOn, cronOff } from '../../../store/action'
 import { Lamp } from '../../../apis/firebase'
+import { Item } from 'native-base'
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -56,23 +57,59 @@ export default (props) => {
 
   const toggleHandler = (params) => async () => {
     if (params === 'on') {
-      setOnToggle(!onToggle)
-
-      if (!onToggle) {
-        try {
-          await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
-          dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
-        } catch (err) {
-          console.log(err)
-        }
-      } else {
-        try {
-          await Lamp.doc(item.id).update({ onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
-          dispatch(cronOff(item.name + '-on'))
-        } catch (err) {
-          console.log(err)
+      if(item.day || item.night){
+        Alert.alert(
+          'Light sensor warning',
+          'This lamp is using day or night feature. Clicking OK will turn them off',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'OK', onPress: async () => {
+                setOnToggle(!onToggle)
+                if (!onToggle) {
+                  try {
+                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
+                    dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
+                  } catch (err) {
+                    console.log(err)
+                  }
+                } else {
+                  try {
+                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
+                    dispatch(cronOff(item.name + '-on'))
+                  } catch (err) {
+                    console.log(err)
+                  }
+                }
+              }
+            },
+          ],
+          { cancelable: false },
+        );
+      }else{
+        setOnToggle(!onToggle)
+        if (!onToggle) {
+          try {
+            await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
+            dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
+          } catch (err) {
+            console.log(err)
+          }
+        } else {
+          try {
+            await Lamp.doc(item.id).update({ onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
+            dispatch(cronOff(item.name + '-on'))
+          } catch (err) {
+            console.log(err)
+          }
         }
       }
+      
+      
     } else {
       setOffToggle(!offToggle)
 
