@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Constant from 'expo-constants'
-import { Dimensions } from 'react-native'
+import { Dimensions, ActivityIndicator } from 'react-native'
 
 import TimePicker from 'react-native-modal-datetime-picker'
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -15,7 +15,8 @@ import { Lamp } from '../../../apis/firebase'
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 export default (props) => {
-  const { navigation: { state: { params: { item } } } } = props
+  const { item } = props
+  const [isLoading, setIsLoading] = useState(false)
 
   const dispatch = useDispatch()
   const [modal, setModal] = useState(false)
@@ -94,82 +95,90 @@ export default (props) => {
     }
   }
 
-  return (
-    <Container>
-      <TopPart>
-        <Heading style={{ fontFamily: "neo-sans-medium" }}>{item.name}</Heading>
-      </TopPart>
+  if (isLoading)
+    return (
+      <Container style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#fec894" />
+      </Container>
+    )
+  else {
+    return (
+      <Container>
+        <TopPart>
+          <Heading style={{ fontFamily: "neo-sans-medium" }}>{item.name}</Heading>
+        </TopPart>
 
 
-      <BotPart>
-        <Box>
-          <OnOffCont>
-            <Txt style={{ fontFamily: "neo-sans-medium" }}>On time</Txt>
-            <ToggleSwitch
-              isOn={onToggle}
-              onColor="#fec894"
-              offColor="#ecf0f1"
-              size="medium"
-              onToggle={toggleHandler('on')}
-            />
-          </OnOffCont>
+        <BotPart>
+          <Box>
+            <OnOffCont>
+              <Txt style={{ fontFamily: "neo-sans-medium" }}>On time</Txt>
+              <ToggleSwitch
+                isOn={onToggle}
+                onColor="#fec894"
+                offColor="#ecf0f1"
+                size="medium"
+                onToggle={toggleHandler('on')}
+              />
+            </OnOffCont>
 
-          <BotCont pointerEvents={onToggle ? 'auto' : 'none'} style={{ backgroundColor: onToggle ? '#f9f9f9' : '#ecf0f1' }}>
-            {
-              !onToggle ?
-                <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
-                :
-                <TimeCont>
-                  <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${onTime.hours}:${onTime.minutes}`}</TimeText>
-                  <Btn onPress={BtnHandler('on')}>
-                    <Ionicons name='ios-clock' size={50} color="#fec894" />
-                  </Btn>
-                </TimeCont>
-            }
-          </BotCont>
-        </Box>
+            <BotCont pointerEvents={onToggle ? 'auto' : 'none'} style={{ backgroundColor: onToggle ? '#f9f9f9' : '#ecf0f1' }}>
+              {
+                !onToggle ?
+                  <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
+                  :
+                  <TimeCont>
+                    <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${onTime.hours}:${onTime.minutes}`}</TimeText>
+                    <Btn onPress={BtnHandler('on')}>
+                      <Ionicons name='ios-clock' size={50} color="#fec894" />
+                    </Btn>
+                  </TimeCont>
+              }
+            </BotCont>
+          </Box>
 
-        <Box>
-          <OnOffCont>
-            <Txt style={{ fontFamily: "neo-sans-medium" }}>Off time</Txt>
-            <ToggleSwitch
-              isOn={offToggle}
-              onColor="#fec894"
-              offColor="#ecf0f1"
-              size="medium"
-              onToggle={toggleHandler('off')}
-            />
-          </OnOffCont>
+          <Box>
+            <OnOffCont>
+              <Txt style={{ fontFamily: "neo-sans-medium" }}>Off time</Txt>
+              <ToggleSwitch
+                isOn={offToggle}
+                onColor="#fec894"
+                offColor="#ecf0f1"
+                size="medium"
+                onToggle={toggleHandler('off')}
+              />
+            </OnOffCont>
 
-          <BotCont pointerEvents={offToggle ? 'auto' : 'none'} style={{ backgroundColor: offToggle ? '#f9f9f9' : '#ecf0f1' }}>
-            {
-              !offToggle ?
-                <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
-                :
-                <TimeCont>
-                  <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${offTime.hours}:${offTime.minutes}`}</TimeText>
-                  <Btn onPress={BtnHandler('off')}>
-                    <Ionicons name='ios-clock' size={50} color="#fec894" />
-                  </Btn>
-                </TimeCont>
-            }
-          </BotCont>
-        </Box>
+            <BotCont pointerEvents={offToggle ? 'auto' : 'none'} style={{ backgroundColor: offToggle ? '#f9f9f9' : '#ecf0f1' }}>
+              {
+                !offToggle ?
+                  <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
+                  :
+                  <TimeCont>
+                    <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${offTime.hours}:${offTime.minutes}`}</TimeText>
+                    <Btn onPress={BtnHandler('off')}>
+                      <Ionicons name='ios-clock' size={50} color="#fec894" />
+                    </Btn>
+                  </TimeCont>
+              }
+            </BotCont>
+          </Box>
 
-        <TimePicker
-          isVisible={modal}
-          mode="time"
-          locale={'en_GB'}
-          is24Hour={true}
-          onConfirm={data => {
-            timeHandler(data.getHours(), data.getMinutes(), timeMode)
-            setModal(false)
-          }}
-          onCancel={() => setModal(false)}
-        />
-      </BotPart>
-    </Container>
-  )
+          <TimePicker
+            isVisible={modal}
+            mode="time"
+            locale={'en_GB'}
+            is24Hour={true}
+            onConfirm={data => {
+              timeHandler(data.getHours(), data.getMinutes(), timeMode)
+              setModal(false)
+            }}
+            onCancel={() => setModal(false)}
+          />
+        </BotPart>
+      </Container>
+    )
+  }
 }
 
 const radius = 20;
