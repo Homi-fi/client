@@ -207,7 +207,7 @@ export default (props) => {
             isVisible={modal}
             mode="time"
             locale={'en_GB'}
-            is24Hour={true}
+            // is24Hour={true}
             onConfirm={data => {
               timeHandler(data.getHours(), data.getMinutes(), timeMode)
               setModal(false)
@@ -284,15 +284,14 @@ const BotPart = styled.View`
   flex: 0.3;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  padding: 15px 7px;
+  justify-content: space-between;
+  width: 88%;
   
 `
 
 const Box = styled.View`
   width: ${screenWidth * 0.4};
   height: ${screenWidth * 0.4};
-  margin-right: 15;
 `
 
 const OnOffCont = styled.View`
