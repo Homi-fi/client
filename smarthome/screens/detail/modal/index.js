@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Constant from 'expo-constants'
+import { Dimensions } from 'react-native'
 
 import TimePicker from 'react-native-modal-datetime-picker'
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -11,6 +12,7 @@ import { useDispatch } from 'react-redux'
 import { cronOn, cronOff } from '../../../store/action'
 import { Lamp } from '../../../apis/firebase'
 
+const screenWidth = Math.round(Dimensions.get('window').width);
 
 export default (props) => {
   const { navigation: { state: { params: { item } } } } = props
@@ -190,13 +192,13 @@ const BotPart = styled.View`
   flex: 0.3;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   padding: 15px 7px;
 `
 
 const Box = styled.View`
-  width: 200;
-  height: 200;
+  width: ${screenWidth * 0.45};
+  height: ${screenWidth * 0.45};
 `
 
 const OnOffCont = styled.View`
