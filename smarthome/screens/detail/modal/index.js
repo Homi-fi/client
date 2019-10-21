@@ -248,53 +248,6 @@ export default (props) => {
       </TouchableOpacity>
     </Container>
   )
-
-<<<<<<< HEAD
-=======
-          <TimePicker
-            isVisible={modal}
-            mode="time"
-            locale={'en_GB'}
-            // is24Hour={true}
-            onConfirm={data => {
-              timeHandler(data.getHours(), data.getMinutes(), timeMode)
-              setModal(false)
-            }}
-            onCancel={() => setModal(false)}
-          />
-        </BotPart>
-        {/* <View style={{ flex: 0.2, alignItems: 'center' }}> */}
-          <TouchableOpacity
-            style={{
-              position: "absolute",
-              bottom: 80,
-            }}
-            onPress={() => {
-              tutup(false)
-            }}>
-            <View style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: 60, height: 60,
-              borderRadius: 100,
-              backgroundColor: 'white',
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}>
-              <Feather name="x" size={30} color="#383838" />
-            </View>
-          </TouchableOpacity>
-        {/* </View> */}
-      </Container>
-    )
-  }
->>>>>>> c791d241477a3cf705add395afd5f07afafdde5b
 }
 
 const radius = 20;
