@@ -42,13 +42,14 @@ export default (props) => {
     const unsubscribe = Lamp.where('roomId', '==', roomId).onSnapshot((querySnapshot) => {
       const lamps = []
       querySnapshot.forEach((doc) => {
+        // console.log(doc.data())
         lamps.push({ id: doc.id, ...doc.data() })
       })
-      if (isSubscribed) setLamps(lamps)
+      setLamps(lamps)
     })
 
     Room.doc(roomId).get().then(doc => {
-      if (isSubscribed) setRoomName(doc.data().name)
+      setRoomName(doc.data().name)
       setIsLoading(false)
     })
 
@@ -80,6 +81,7 @@ export default (props) => {
           {
             lamps.length > 0 ?
               lamps.map((item, i) => {
+                {/* console.log(item) */ }
                 return <Item item={item} navigation={navigation} key={i} />
               })
               :
@@ -90,7 +92,7 @@ export default (props) => {
               )
           }
         </ListCont>
-        
+
         <View style={{ flex: 0.2, alignItems: 'center' }}>
           <TouchableOpacity
             style={{
