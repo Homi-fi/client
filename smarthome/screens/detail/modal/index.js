@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Constant from 'expo-constants'
-import { Dimensions, Alert } from 'react-native'
+import { Dimensions, Alert, ActivityIndicator, TouchableOpacity, View } from 'react-native'
+import { Feather } from '@expo/vector-icons';
 
 import TimePicker from 'react-native-modal-datetime-picker'
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -16,7 +17,8 @@ import { Item } from 'native-base'
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 export default (props) => {
-  const { navigation: { state: { params: { item } } } } = props
+  const { item, tutup } = props
+  const [isLoading, setIsLoading] = useState(false)
 
   const dispatch = useDispatch()
   const [modal, setModal] = useState(false)
@@ -131,91 +133,144 @@ export default (props) => {
     }
   }
 
-  return (
-    <Container>
-      <TopPart>
-        <Heading style={{ fontFamily: "neo-sans-medium" }}>{item.name}</Heading>
-      </TopPart>
+  if (isLoading)
+    return (
+      <Container style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#fec894" />
+      </Container>
+    )
+  else {
+    return (
+      <Container>
+        {/* <TopPart>
+          <Heading style={{ fontFamily: "neo-sans-medium" }}>{item.name}</Heading>
+
+        </TopPart> */}
 
 
-      <BotPart>
-        <Box>
-          <OnOffCont>
-            <Txt style={{ fontFamily: "neo-sans-medium" }}>On time</Txt>
-            <ToggleSwitch
-              isOn={onToggle}
-              onColor="#fec894"
-              offColor="#ecf0f1"
-              size="medium"
-              onToggle={toggleHandler('on')}
-            />
-          </OnOffCont>
+        <BotPart style={{marginTop: 20}}>
+          <Box style={styless.shadow}>
+            <OnOffCont>
+              <Txt style={{ fontFamily: "neo-sans-medium" }}>On time</Txt>
+              <ToggleSwitch
+                isOn={onToggle}
+                onColor="#fec894"
+                offColor="#ecf0f1"
+                size="medium"
+                onToggle={toggleHandler('on')}
+              />
+            </OnOffCont>
 
-          <BotCont pointerEvents={onToggle ? 'auto' : 'none'} style={{ backgroundColor: onToggle ? '#f9f9f9' : '#ecf0f1' }}>
-            {
-              !onToggle ?
-                <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
-                :
-                <TimeCont>
-                  <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${onTime.hours}:${onTime.minutes}`}</TimeText>
-                  <Btn onPress={BtnHandler('on')}>
-                    <Ionicons name='ios-clock' size={50} color="#fec894" />
-                  </Btn>
-                </TimeCont>
-            }
-          </BotCont>
-        </Box>
+            <BotCont pointerEvents={onToggle ? 'auto' : 'none'} style={{ backgroundColor: onToggle ? '#f9f9f9' : '#ecf0f1' }}>
+              {
+                !onToggle ?
+                  <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
+                  :
+                  <TimeCont>
+                    <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${onTime.hours}:${onTime.minutes}`}</TimeText>
+                    <Btn onPress={BtnHandler('on')}>
+                      <Ionicons name='ios-clock' size={50} color="#fec894" />
+                    </Btn>
+                  </TimeCont>
+              }
+            </BotCont>
+          </Box>
 
-        <Box>
-          <OnOffCont>
-            <Txt style={{ fontFamily: "neo-sans-medium" }}>Off time</Txt>
-            <ToggleSwitch
-              isOn={offToggle}
-              onColor="#fec894"
-              offColor="#ecf0f1"
-              size="medium"
-              onToggle={toggleHandler('off')}
-            />
-          </OnOffCont>
+          <Box style={styless.shadow}>
+            <OnOffCont>
+              <Txt style={{ fontFamily: "neo-sans-medium" }}>Off time</Txt>
+              <ToggleSwitch
+                isOn={offToggle}
+                onColor="#fec894"
+                offColor="#ecf0f1"
+                size="medium"
+                onToggle={toggleHandler('off')}
+              />
+            </OnOffCont>
 
-          <BotCont pointerEvents={offToggle ? 'auto' : 'none'} style={{ backgroundColor: offToggle ? '#f9f9f9' : '#ecf0f1' }}>
-            {
-              !offToggle ?
-                <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
-                :
-                <TimeCont>
-                  <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${offTime.hours}:${offTime.minutes}`}</TimeText>
-                  <Btn onPress={BtnHandler('off')}>
-                    <Ionicons name='ios-clock' size={50} color="#fec894" />
-                  </Btn>
-                </TimeCont>
-            }
-          </BotCont>
-        </Box>
+            <BotCont  pointerEvents={offToggle ? 'auto' : 'none'} style={{ backgroundColor: offToggle ? '#f9f9f9' : '#ecf0f1' }}>
+              {
+                !offToggle ?
+                  <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
+                  :
+                  <TimeCont>
+                    <TimeText style={{ fontFamily: "neo-sans-medium" }}>{`${offTime.hours}:${offTime.minutes}`}</TimeText>
+                    <Btn onPress={BtnHandler('off')}>
+                      <Ionicons name='ios-clock' size={50} color="#fec894" />
+                    </Btn>
+                  </TimeCont>
+              }
+            </BotCont>
+          </Box>
 
-        <TimePicker
-          isVisible={modal}
-          mode="time"
-          locale={'en_GB'}
-          is24Hour={true}
-          onConfirm={data => {
-            timeHandler(data.getHours(), data.getMinutes(), timeMode)
-            setModal(false)
-          }}
-          onCancel={() => setModal(false)}
-        />
-      </BotPart>
-    </Container>
-  )
+          <TimePicker
+            isVisible={modal}
+            mode="time"
+            locale={'en_GB'}
+            is24Hour={true}
+            onConfirm={data => {
+              timeHandler(data.getHours(), data.getMinutes(), timeMode)
+              setModal(false)
+            }}
+            onCancel={() => setModal(false)}
+          />
+        </BotPart>
+        {/* <View style={{ flex: 0.2, alignItems: 'center' }}> */}
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              bottom: 80,
+            }}
+            onPress={() => {
+              tutup(false)
+            }}>
+            <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 60, height: 60,
+              borderRadius: 100,
+              backgroundColor: 'white',
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}>
+              <Feather name="x" size={30} color="#383838" />
+            </View>
+          </TouchableOpacity>
+        {/* </View> */}
+      </Container>
+    )
+  }
 }
 
 const radius = 20;
+
+const styless = {
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
+  }
+}
+
 
 const Container = styled.View`
   flex: 1;
   background-color: #f9f9f9;
   color: #fec894;
   margin-top: ${Constant.statusBarHeight};
+  align-items: center;
 `
 
 const TopPart = styled.View`
@@ -229,13 +284,15 @@ const BotPart = styled.View`
   flex: 0.3;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
   padding: 15px 7px;
+  
 `
 
 const Box = styled.View`
-  width: ${screenWidth * 0.45};
-  height: ${screenWidth * 0.45};
+  width: ${screenWidth * 0.4};
+  height: ${screenWidth * 0.4};
+  margin-right: 15;
 `
 
 const OnOffCont = styled.View`
@@ -243,7 +300,6 @@ const OnOffCont = styled.View`
   background-color: #f9f9f9;
   border-top-left-radius: ${radius};
   border-top-right-radius: ${radius};
-  elevation: 5;
   justify-content: space-between;
   padding: 0 20px;
   flex-direction: row;
@@ -253,7 +309,6 @@ const BotCont = styled.View`
   background-color: #f9f9f9;
   border-bottom-left-radius: ${radius};
   border-bottom-right-radius: ${radius};
-  elevation: 5;
   justify-content: space-between;
   padding: 0 20px;
   flex-direction: row;
