@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Lamp, Room } from '../../apis/firebase'
-import { StatusBar, ActivityIndicator } from 'react-native'
+import { StatusBar, ActivityIndicator, TouchableOpacity, View} from 'react-native'
 import Item from './item'
+import { Feather } from '@expo/vector-icons';
 
 export default (props) => {
   const { navigation } = props
@@ -66,6 +67,32 @@ export default (props) => {
               )
           }
         </ListCont>
+        <View style={{flex: 0.2, alignItems: 'center'}}>
+          <TouchableOpacity 
+            style={{
+              position: "absolute",
+              bottom: 80,}} 
+              onPress={()=> {
+                navigation.navigate('Room')
+              }}>
+              <View style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width:60, height: 60, 
+                  borderRadius: '100', 
+                  backgroundColor: 'white',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                      width: 0,
+                      height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5,}}>
+                  <Feather name="x" size={30} color="#383838" />
+              </View>
+          </TouchableOpacity>
+        </View>
       </Container>
     )
   }

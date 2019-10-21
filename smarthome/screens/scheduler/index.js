@@ -54,17 +54,23 @@ export default (props) => {
               <TouchableOpacity onPress={()=> {
                 setDayModal(true)
               }}>
-                <ImageBackground source={require('../../assets/sun.jpg')} style={[styles.menu, {marginRight: 20,}]}   imageStyle={{ borderRadius: 10 }}>
+                <View style={[styles.menu,{backgroundColor: '#ffc32d', marginRight: 20,}]}>
                   <Text style={styles.text}>Days</Text>
-                </ImageBackground>
+                </View>
+                {/* <ImageBackground source={require('../../assets/sun.jpg')} style={[styles.menu, {marginRight: 20,}]}   imageStyle={{ borderRadius: 10 }}>
+                  <Text style={styles.text}>Days</Text>
+                </ImageBackground> */}
               </TouchableOpacity>
               
               <TouchableOpacity onPress={()=> {
                 setNightModal(true)
               }}>
-                <ImageBackground source={require('../../assets/night.png')} style={styles.menu} imageStyle={{ borderRadius: 10 }}>
+                <View style={[styles.menu,{backgroundColor: '#140326'}]}>
                   <Text style={styles.text}>Nights</Text>
-                </ImageBackground>       
+                </View>
+                {/* <ImageBackground source={require('../../assets/night.png')} style={styles.menu} imageStyle={{ borderRadius: 10 }}>
+                  <Text style={styles.text}>Nights</Text>
+                </ImageBackground>        */}
               </TouchableOpacity>
             </>
           }
