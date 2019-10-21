@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Constant from 'expo-constants'
-import { Dimensions, ActivityIndicator } from 'react-native'
+import { Dimensions, Alert, ActivityIndicator, TouchableOpacity, View } from 'react-native'
+import { Feather } from '@expo/vector-icons';
 
 import TimePicker from 'react-native-modal-datetime-picker'
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -11,11 +12,12 @@ import { Ionicons } from '@expo/vector-icons'
 import { useDispatch } from 'react-redux'
 import { cronOn, cronOff } from '../../../store/action'
 import { Lamp } from '../../../apis/firebase'
+import { Item } from 'native-base'
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 export default (props) => {
-  const { item } = props
+  const { item, tutup } = props
   const [isLoading, setIsLoading] = useState(false)
 
   const dispatch = useDispatch()
@@ -57,23 +59,59 @@ export default (props) => {
 
   const toggleHandler = (params) => async () => {
     if (params === 'on') {
-      setOnToggle(!onToggle)
-
-      if (!onToggle) {
-        try {
-          await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
-          dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
-        } catch (err) {
-          console.log(err)
-        }
-      } else {
-        try {
-          await Lamp.doc(item.id).update({ onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
-          dispatch(cronOff(item.name + '-on'))
-        } catch (err) {
-          console.log(err)
+      if(item.day || item.night){
+        Alert.alert(
+          'Light sensor warning',
+          'This lamp is using day or night feature. Clicking OK will turn them off',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'OK', onPress: async () => {
+                setOnToggle(!onToggle)
+                if (!onToggle) {
+                  try {
+                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
+                    dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
+                  } catch (err) {
+                    console.log(err)
+                  }
+                } else {
+                  try {
+                    await Lamp.doc(item.id).update({ day: false, night: false, onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
+                    dispatch(cronOff(item.name + '-on'))
+                  } catch (err) {
+                    console.log(err)
+                  }
+                }
+              }
+            },
+          ],
+          { cancelable: false },
+        );
+      }else{
+        setOnToggle(!onToggle)
+        if (!onToggle) {
+          try {
+            await Lamp.doc(item.id).update({ onScheduler: { status: true, hours: onTime.hours, minutes: onTime.minutes } })
+            dispatch(cronOn(onTime.hours, onTime.minutes, item.name + '-on'))
+          } catch (err) {
+            console.log(err)
+          }
+        } else {
+          try {
+            await Lamp.doc(item.id).update({ onScheduler: { status: false, hours: onTime.hours, minutes: onTime.minutes } })
+            dispatch(cronOff(item.name + '-on'))
+          } catch (err) {
+            console.log(err)
+          }
         }
       }
+      
+      
     } else {
       setOffToggle(!offToggle)
 
@@ -104,13 +142,14 @@ export default (props) => {
   else {
     return (
       <Container>
-        <TopPart>
+        {/* <TopPart>
           <Heading style={{ fontFamily: "neo-sans-medium" }}>{item.name}</Heading>
-        </TopPart>
+
+        </TopPart> */}
 
 
-        <BotPart>
-          <Box>
+        <BotPart style={{marginTop: 20}}>
+          <Box style={styless.shadow}>
             <OnOffCont>
               <Txt style={{ fontFamily: "neo-sans-medium" }}>On time</Txt>
               <ToggleSwitch
@@ -137,7 +176,7 @@ export default (props) => {
             </BotCont>
           </Box>
 
-          <Box>
+          <Box style={styless.shadow}>
             <OnOffCont>
               <Txt style={{ fontFamily: "neo-sans-medium" }}>Off time</Txt>
               <ToggleSwitch
@@ -149,7 +188,7 @@ export default (props) => {
               />
             </OnOffCont>
 
-            <BotCont pointerEvents={offToggle ? 'auto' : 'none'} style={{ backgroundColor: offToggle ? '#f9f9f9' : '#ecf0f1' }}>
+            <BotCont  pointerEvents={offToggle ? 'auto' : 'none'} style={{ backgroundColor: offToggle ? '#f9f9f9' : '#ecf0f1' }}>
               {
                 !offToggle ?
                   <ScheduleText style={{ color: 'grey' }}>no schedule, yet.</ScheduleText>
@@ -176,6 +215,34 @@ export default (props) => {
             onCancel={() => setModal(false)}
           />
         </BotPart>
+        {/* <View style={{ flex: 0.2, alignItems: 'center' }}> */}
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              bottom: 80,
+            }}
+            onPress={() => {
+              tutup(false)
+            }}>
+            <View style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: 60, height: 60,
+              borderRadius: 100,
+              backgroundColor: 'white',
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}>
+              <Feather name="x" size={30} color="#383838" />
+            </View>
+          </TouchableOpacity>
+        {/* </View> */}
       </Container>
     )
   }
@@ -183,11 +250,27 @@ export default (props) => {
 
 const radius = 20;
 
+const styless = {
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
+  }
+}
+
+
 const Container = styled.View`
   flex: 1;
   background-color: #f9f9f9;
   color: #fec894;
   margin-top: ${Constant.statusBarHeight};
+  align-items: center;
 `
 
 const TopPart = styled.View`
@@ -201,13 +284,15 @@ const BotPart = styled.View`
   flex: 0.3;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
   padding: 15px 7px;
+  
 `
 
 const Box = styled.View`
-  width: ${screenWidth * 0.45};
-  height: ${screenWidth * 0.45};
+  width: ${screenWidth * 0.4};
+  height: ${screenWidth * 0.4};
+  margin-right: 15;
 `
 
 const OnOffCont = styled.View`
@@ -215,7 +300,6 @@ const OnOffCont = styled.View`
   background-color: #f9f9f9;
   border-top-left-radius: ${radius};
   border-top-right-radius: ${radius};
-  elevation: 5;
   justify-content: space-between;
   padding: 0 20px;
   flex-direction: row;
@@ -225,7 +309,6 @@ const BotCont = styled.View`
   background-color: #f9f9f9;
   border-bottom-left-radius: ${radius};
   border-bottom-right-radius: ${radius};
-  elevation: 5;
   justify-content: space-between;
   padding: 0 20px;
   flex-direction: row;

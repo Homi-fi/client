@@ -70,7 +70,7 @@ export default (props) => {
         visible={modal}
       >
         {/* <Days lamps={lamps} modal={setDayModal} /> */}
-        <ModalItem item={item} />
+        <ModalItem item={item} tutup={setModal}/>
       </Modal>
     </>
   )
