@@ -1,7 +1,8 @@
-import { SET_USER } from '../action/actionTypes'
+import { SET_USER, SET_SUCCESS } from '../action/actionTypes'
 
 const initialState = {
-  user: {}
+  user: {},
+  success:false
 }
 
 export default (state = initialState, action) => {
@@ -9,7 +10,12 @@ export default (state = initialState, action) => {
     case SET_USER:
       return {
         ...state,
-        user: action.user
+        user: action.user.payload
+      }
+    case SET_SUCCESS:
+      return {
+        ...state,
+        success: action.success
       }
     default: return state
   }

@@ -1,4 +1,4 @@
-import { REGISTER, SET_USER } from './actionTypes'
+import { SET_USER, SET_SUCCESS } from './actionTypes'
 import { Alert } from 'react-native'
 import axios from 'axios'
 import { AsyncStorage } from 'react-native'
@@ -13,6 +13,13 @@ export const setUser = payload => {
   }
 }
 
+export const setSuccess = (payload) => {
+  return {
+    type: SET_SUCCESS,
+    success: payload
+  }
+}
+
 export const register = (data) => async dispatch => {
   try {
     await axios({
@@ -22,6 +29,7 @@ export const register = (data) => async dispatch => {
     })
     Alert.alert('Success!', 'Successfully Register')
   } catch (error) {
+    // console.log(error)
     let message = (error.response.data && error.response.data.totalError[0]) || 'Fail to Register'
     Alert.alert('Error', message)
 
@@ -42,7 +50,9 @@ export const signin = (result) => async dispatch => {
       name: data.name
     }
 
+
     dispatch(setUser(payload))
+    dispatch(setSuccess(true))
 
     Alert.alert('Success!', 'Successfully Login')
   } catch (error) {
