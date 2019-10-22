@@ -4,10 +4,7 @@ import * as Font from 'expo-font';
 import { Notifications } from 'expo';
 import { Sensor, Room, Door,User } from '../../apis/firebase'
 import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
 import * as Permissions from 'expo-permissions';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import { DeviceMotion } from 'expo-sensors';
 import axios from 'axios'
 
 
@@ -94,18 +91,6 @@ function Rooms(props){
         });
         registerForPushNotificationsAsync()
         checkDoor()
-        props.navigation.addListener(
-            'didBlur',
-            payload => {
-              DeviceMotion.removeAllListeners()
-            }
-          );
-        props.navigation.addListener(
-            'didFocus',
-            payload => {
-              shakeListener()
-            }
-          );
     },[])
 
 
@@ -181,13 +166,7 @@ function Rooms(props){
     //     })
     // }
 
-        const shakeListener =  () => {
-        DeviceMotion.addListener((data)=>{
-            if(data.acceleration["x"] > 10){
-                setModalVisible(true)
-            }
-        })
-    }
+
 
     
 
@@ -267,78 +246,16 @@ function Rooms(props){
           );
     }
 
-    const handleBarcode = () => {
-        setModalVisible(true)
-    }
-
-    const closeModal = () =>{
-        setModalVisible(false)
-    }
-    const handleBarCodeScanned = ({ type, data }) => {
-        setScanned(true)
-        if(data == 'Please Open the Door'){
-            Door
-            .doc('ogwpJEM8Ekn9JiKtYogA')
-            .update({
-                status: true
-            })
-            .then((data) => {
-                setModalVisible(false)
-            })
-            .catch((error)=>{
-                Alert.alert('Error!', 'Failed to update your door!')
-            })
-            
-            
-        }else{
-            Alert.alert(`Please Scan the right QRcode`)
-        }
-      }
-
+ 
 
     return(
         <>
            {roomies.length > 0 ?
            <>
-           <View style={styles.container}>
            <StatusBar backgroundColor="whitesmoke" barStyle="dark-content" />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-        }}>        
-       <BlurView tint="light" intensity={50} style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:"blue"}}>
-      <View style={{width:"90%",alignItems:"flex-start"}}> 
-          <TouchableOpacity
-              onPress={() => {
-                closeModal()
-            }}>
-              <AntDesign name="closecircleo" size={30} color="#fec894"/>
-          </TouchableOpacity>
-      </View>
-        <View style={{height:500,width:350}}>
-              <BarCodeScanner
-                  onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-              style={StyleSheet.absoluteFillObject}
-              />
-        </View>
-        <View>
-
-        {scanned && (
-              <TouchableOpacity onPress={() => setScanned(false)}>
-                  <Text style={{color:"#fec894", fontFamily:"neo-sans-medium"}}>Tap to Scan Again</Text>
-              </TouchableOpacity>
-              )}
-        </View>
-      </BlurView>
-    </Modal>
+           <View style={styles.container}>
             <View style={styles.upBox}>
-                <View style={{width:"100%",justifyContent:"space-between", flexDirection:"row"}}>
-                    <TouchableOpacity onPress={()=>{handleBarcode()}}>
-                        <Ionicons name="ios-barcode" size={30} color="#fec894" />
-                    </TouchableOpacity>
+                <View style={{width:"100%",justifyContent:"flex-end", flexDirection:"row"}}>
                     <TouchableOpacity onPress={()=>{handleLogout()}}>
                         <AntDesign name="logout" size={30} color="#fec894" />
                     </TouchableOpacity>
@@ -369,14 +286,16 @@ function Rooms(props){
             <View style={styles.downBox}>
                 {sense ? 
                 <>
-                                            <TouchableOpacity style={styles.sensorz}>
+                            {/* <TouchableOpacity style={styles.sensorz}> */}
+                            <View style={styles.sensorz}>
                                 <View style={{height:30}}>
                                     <Ionicons name="ios-water" size={20} color="#fec894" />
                                 </View>
                                 <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense.humidity}</Text>
                                 <Text style={{position:"absolute", right:10,top:70}}>%</Text>
                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[0]}</Text>
-                            </TouchableOpacity>
+                            </View>
+                            {/* </TouchableOpacity> */}
                             <TouchableOpacity style={styles.sensorz} onPress={()=>{changeDoor()}}>
                                 <View style={{height:30}}>
                                 <Ionicons name="ios-home" size={20} color="#fec894" /> 
@@ -384,14 +303,17 @@ function Rooms(props){
                                {mydoor ? <MaterialCommunityIcons name="home-lock-open" size={70} color="black" style={{position:"absolute",right:20,top:40}} />:<MaterialCommunityIcons name="home-lock" size={70} color="black" style={{position:"absolute",right:20,top:40}}/> } 
                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>Door</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.sensorz}>
+                            {/* <TouchableOpacity style={styles.sensorz}> */}
+                            <View style={styles.sensorz}>
                                 <View style={{height:30}}>
                                     <MaterialCommunityIcons name="thermometer" size={20} color="#fec894" /> 
                                 </View>
                                 <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense.temperature}  </Text>
                                 <MaterialCommunityIcons name="temperature-celsius" size={15} color="black" style={{position:"absolute",right:10,top:70}} />
                                  <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[2]}</Text>
-                            </TouchableOpacity>
+                            </View>
+
+                            {/* </TouchableOpacity> */}
                 </>:null}
 
 
