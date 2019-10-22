@@ -1,10 +1,17 @@
-import { REGISTER } from './actionTypes'
+import { REGISTER, SET_USER } from './actionTypes'
 import { Alert } from 'react-native'
 import axios from 'axios'
 import { AsyncStorage } from 'react-native'
 
 const baseURLuser = `http://34.87.107.147/user`
 const baseURLCron = `http://34.87.107.147/cron/`
+
+export const setUser = payload => {
+  return {
+    type: SET_USER,
+    user: { payload }
+  }
+}
 
 export const register = (data) => async dispatch => {
   try {
@@ -30,6 +37,13 @@ export const signin = (result) => async dispatch => {
     })
     await AsyncStorage.setItem('token', data.token)
     await AsyncStorage.setItem('name', data.name)
+
+    const payload = {
+      name: data.name
+    }
+
+    dispatch(setUser(payload))
+
     Alert.alert('Success!', 'Successfully Login')
   } catch (error) {
     let message = (error.response.data && error.response.data.message) || 'Fail to Login'
