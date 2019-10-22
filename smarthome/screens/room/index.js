@@ -23,7 +23,6 @@ function Rooms(props){
     const [bells, setBell] = useState(null)
     const [temp, setTemp] = useState(null)
     const [notification, setNotification] = useState(null)
-    console.log(myname)
 
     const registerForPushNotificationsAsync = async () => {
           const { status: existingStatus } = await Permissions.getAsync(
@@ -205,10 +204,10 @@ function Rooms(props){
     
 
 
-    const getName = async() => {
-        let name = await AsyncStorage.getItem('name')
-        setMyName(name)
-    }
+    // const getName = async() => {
+    //     let name = await AsyncStorage.getItem('name')
+    //     setMyName(name)
+    // }
 
     const getPermission = async () => {
         const {status} = await Permissions.askAsync(Permissions.CAMERA)
@@ -216,7 +215,7 @@ function Rooms(props){
     }
 
     useEffect(()=>{
-        getName()
+        // getName()
         getPermission()
     },[])
     

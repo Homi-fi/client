@@ -42,6 +42,7 @@ export const signin = (result) => async dispatch => {
     const payload = {
       name: data.name
     }
+    console.log(payload)
 
     dispatch(setUser(payload))
 
