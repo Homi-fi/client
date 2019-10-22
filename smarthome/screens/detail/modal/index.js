@@ -271,7 +271,6 @@ const Container = styled.View`
   flex: 1;
   background-color: #f9f9f9;
   color: #fec894;
-  margin-top: ${Constant.statusBarHeight};
   align-items: center;
 `
 
