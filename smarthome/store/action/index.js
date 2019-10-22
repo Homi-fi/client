@@ -3,8 +3,8 @@ import { Alert } from 'react-native'
 import axios from 'axios'
 import { AsyncStorage } from 'react-native'
 
-const baseURLuser = `http://localhost:3000/user`
-const baseURLCron = `http://localhost:3000/cron/`
+const baseURLuser = `http://34.87.107.147/user`
+const baseURLCron = `http://34.87.107.147/cron/`
 
 export const register = (data) => async dispatch => {
   try {

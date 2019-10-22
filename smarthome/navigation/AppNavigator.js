@@ -35,8 +35,6 @@ const RoomStack = createStackNavigator({
       header: null
     }
   }
-}, {
-  // initialRouteName: 'Detail'
 })
 
 RoomStack.navigationOptions = ({ navigation }) => {
@@ -88,9 +86,8 @@ const TabNavigator = createBottomTabNavigator({
 
 
 const switchNav = createSwitchNavigator({
-  App: TabNavigator,
   LandingPage: Login,
-
+  App: TabNavigator,
 })
 
 export default createAppContainer(switchNav)
