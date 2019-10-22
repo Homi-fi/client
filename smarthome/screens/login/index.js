@@ -8,9 +8,11 @@ import Swiper from 'react-native-swiper'
 import {Form, Item, Label, Input,Button,Icon} from 'native-base'
 import {register, signin} from '../../store/action'
 import back from '../../assets/backlogin.png'
+import { useSelector } from 'react-redux'
 
 export default (props) => {
     const dispatch = useDispatch()
+    const mysuccess = useSelector(state => state.user.success)
     const [fontLoaded, setFont] = useState(false)
     const [emailLogin, setLogin] = useState('')
     const [passwordLogin, setPassL] = useState('')
@@ -18,28 +20,30 @@ export default (props) => {
     const [passwordRegister, setPassR] = useState('')
     const [nameRegister, setName] = useState('')
 
-
-    const handleRegister = () => {
-        let data = {
-            email: emailRegister,
-            password: passwordRegister,
-            name: nameRegister
+    // const handleRegister = () => {
+    //     let data = {
+    //         email: emailRegister,
+    //         password: passwordRegister,
+    //         name: nameRegister
+    //     }
+    //     dispatch(register(data))
+    //     setRegister('')
+    //     setPassR('')
+    //     setName('')
+    // }
+    useEffect(()=>{
+        if(mysuccess){
+            props.navigation.navigate('App')
+            setLogin('')
+            setPassL('')
         }
-        dispatch(register(data))
-        setRegister('')
-        setPassR('')
-        setName('')
-    }
-
+    },[mysuccess])
     const handleLogin = async () => {
         let data = {
             email: emailLogin,
             password: passwordLogin,
         }
         await dispatch(signin(data))
-        props.navigation.navigate('App')
-        setLogin('')
-        setPassL('')
     }
 
     useEffect(()=>{

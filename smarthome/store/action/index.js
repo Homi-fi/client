@@ -1,4 +1,4 @@
-import { REGISTER, SET_USER } from './actionTypes'
+import { SET_USER, SET_SUCCESS } from './actionTypes'
 import { Alert } from 'react-native'
 import axios from 'axios'
 import { AsyncStorage } from 'react-native'
@@ -10,6 +10,13 @@ export const setUser = payload => {
   return {
     type: SET_USER,
     user: { payload }
+  }
+}
+
+export const setSuccess = (payload) => {
+  return {
+    type: SET_SUCCESS,
+    success: payload
   }
 }
 
@@ -42,9 +49,10 @@ export const signin = (result) => async dispatch => {
     const payload = {
       name: data.name
     }
-    console.log(payload)
+
 
     dispatch(setUser(payload))
+    dispatch(setSuccess(true))
 
     Alert.alert('Success!', 'Successfully Login')
   } catch (error) {
