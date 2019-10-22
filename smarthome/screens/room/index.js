@@ -7,14 +7,15 @@ import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
 import * as Permissions from 'expo-permissions';
 import axios from 'axios'
 
-
+import { useSelector } from 'react-redux'
 
 function Rooms(props){
     const [change, setchange] = useState(false)
     const [hasCameraPermission, setCameraPermission] =  useState(null)
     const [mydoor, setDoor] = useState(null)
     const [scanned, setScanned] = useState(false)
-    const [myname, setMyName] = useState('')
+    // const [myname, setMyName] = useState('')
+    const myname = useSelector(state => state.user.user.name)
     const [fontLoaded, setFont] = useState(false)
     const [roomies, setRooms] = useState([])
     const [sense, setSense] = useState(null)
