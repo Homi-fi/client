@@ -22,7 +22,7 @@ function Rooms(props){
     const [bells, setBell] = useState(null)
     const [temp, setTemp] = useState(null)
     const [notification, setNotification] = useState(null)
-
+    console.log(myname)
 
     const registerForPushNotificationsAsync = async () => {
           const { status: existingStatus } = await Permissions.getAsync(

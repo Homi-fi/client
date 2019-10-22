@@ -15,6 +15,7 @@ export const register = (data) => async dispatch => {
     })
     Alert.alert('Success!', 'Successfully Register')
   } catch (error) {
+    // console.log(error)
     let message = (error.response.data && error.response.data.totalError[0]) || 'Fail to Register'
     Alert.alert('Error', message)
 
