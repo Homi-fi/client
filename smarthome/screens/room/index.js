@@ -19,7 +19,7 @@ function Rooms(props){
     const [roomies, setRooms] = useState([])
     const [sense, setSense] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
-    // const [myToken, setToken] = useState('')
+    const [bells, setBell] = useState(null)
     const [temp, setTemp] = useState(null)
     const [notification, setNotification] = useState(null)
 
@@ -57,6 +57,13 @@ function Rooms(props){
             sendPushNotification()
         }
     },[temp])
+
+    useEffect(()=>{
+        if(bells){
+            sendKnockNotif()
+        }
+    },[bells])
+    console.log(bells)
     const sendPushNotification = async () => {
         User
         .doc('user1')
@@ -66,8 +73,34 @@ function Rooms(props){
             const message = {
                 to: myToken,
                 sound: 'default',
-                title: 'Alert!',
+                title: 'Fire Alert!',
                 body: 'Your House is on fire!!!' ,
+                data: { data: 'goes here' },
+              };
+              const response = await axios({
+                url:'https://exp.host/--/api/v2/push/send',
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Accept-encoding': 'gzip, deflate',
+                  'Content-Type': 'application/json',
+                },
+                data: JSON.stringify(message),
+              });
+        })
+    }
+
+    const sendKnockNotif = async () => {
+        User
+        .doc('user1')
+        .get()
+        .then(async function(doc){
+            let myToken = doc.data().expoToken
+            const message = {
+                to: myToken,
+                sound: 'default',
+                title: 'Bell Alert!',
+                body: 'Someone is pressing the bell!!!' ,
                 data: { data: 'goes here' },
               };
               const response = await axios({
@@ -220,6 +253,8 @@ function Rooms(props){
             });
             setSense(sensors[0])
             setTemp(sensors[0].temperature)
+            setBell(sensors[0].bell)
+
         });
       },[])
 
@@ -262,8 +297,8 @@ function Rooms(props){
                 
                 </View>
                 <View>
-                {fontLoaded?<Text style={{fontFamily:"neo-sans-medium", fontSize:25}}>Hello, {myname}! </Text>:null}
-                 {fontLoaded?<Text style={{fontFamily:"neo-sans-medium"}}>What are you up to?</Text>:null}
+                    {fontLoaded?<Text style={{fontFamily:"neo-sans-medium", fontSize:25}}>Hello, {myname}! </Text>:null}
+                    {fontLoaded?<Text style={{fontFamily:"neo-sans-medium"}}>What are you up to?</Text>:null}
                 </View>
                 
             </View>
