@@ -6,15 +6,17 @@ import { Sensor, Room, Door,User } from '../../apis/firebase'
 import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import * as Permissions from 'expo-permissions';
 import axios from 'axios'
-
-
+import {setSuccess} from '../../store/action'
+import { useSelector, useDispatch } from 'react-redux'
 
 function Rooms(props){
+    const dispatch = useDispatch()
     const [change, setchange] = useState(false)
     const [hasCameraPermission, setCameraPermission] =  useState(null)
     const [mydoor, setDoor] = useState(null)
     const [scanned, setScanned] = useState(false)
-    const [myname, setMyName] = useState('')
+    // const [myname, setMyName] = useState('')
+    const myname = useSelector(state => state.user.user.name)
     const [fontLoaded, setFont] = useState(false)
     const [roomies, setRooms] = useState([])
     const [sense, setSense] = useState(null)
@@ -22,7 +24,6 @@ function Rooms(props){
     const [bells, setBell] = useState(null)
     const [temp, setTemp] = useState(null)
     const [notification, setNotification] = useState(null)
-
 
     const registerForPushNotificationsAsync = async () => {
           const { status: existingStatus } = await Permissions.getAsync(
@@ -63,7 +64,6 @@ function Rooms(props){
             sendKnockNotif()
         }
     },[bells])
-    console.log(bells)
     const sendPushNotification = async () => {
         User
         .doc('user1')
@@ -204,10 +204,10 @@ function Rooms(props){
     
 
 
-    const getName = async() => {
-        let name = await AsyncStorage.getItem('name')
-        setMyName(name)
-    }
+    // const getName = async() => {
+    //     let name = await AsyncStorage.getItem('name')
+    //     setMyName(name)
+    // }
 
     const getPermission = async () => {
         const {status} = await Permissions.askAsync(Permissions.CAMERA)
@@ -215,7 +215,7 @@ function Rooms(props){
     }
 
     useEffect(()=>{
-        getName()
+        // getName()
         getPermission()
     },[])
     
@@ -262,6 +262,7 @@ function Rooms(props){
     const removeAll = async () => {
         await AsyncStorage.removeItem('token') 
         await AsyncStorage.removeItem('name')
+        dispatch(setSuccess(false))
         props.navigation.navigate('LandingPage')
     }
 
