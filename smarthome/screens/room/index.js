@@ -54,7 +54,7 @@ function Rooms(props){
       };
 
     useEffect(()=>{
-        if(temp > 40){
+        if(temp >= 27){
             sendPushNotification()
         }
     },[temp])
