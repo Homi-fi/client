@@ -329,7 +329,7 @@ function Rooms(props){
                                 </View>
                                 <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense.humidity}</Text>
                                 <Text style={{position:"absolute", right:10,top:70}}>%</Text>
-                                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[0]}</Text>
+                                <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[1]}</Text>
                             </View>
                             {/* </TouchableOpacity> */}
                             <TouchableOpacity style={styles.sensorz} onPress={()=>{changeDoor()}}>
@@ -346,7 +346,7 @@ function Rooms(props){
                                 </View>
                                 <Text style={{fontSize:45, fontFamily:"neo-sans-medium", textAlign:"center"}}>{sense.temperature}  </Text>
                                 <MaterialCommunityIcons name="temperature-celsius" size={15} color="black" style={{position:"absolute",right:10,top:70}} />
-                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[2]}</Text>
+                                 <Text style={{fontSize:12,fontFamily:"neo-sans-medium",textAlign:"right",color:"grey"}}>{Object.keys(sense)[3]}</Text>
                             </View>
 
                             {/* </TouchableOpacity> */}
