@@ -9,11 +9,13 @@ import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { DeviceMotion } from 'expo-sensors';
 import axios from 'axios'
-
+// import * as SQLite from 'expo-sqlite';
 
 
 function Rooms(props){
+    // const db = SQLite.openDatabase("db.db");
     const [change, setchange] = useState(false)
+    const [publicKey, setPublic] = useState('02be9f89f1d4a9a4ec869ad52041607f3e1bb0df1f62c63134b198b2a1c4882870')
     const [hasCameraPermission, setCameraPermission] =  useState(null)
     const [mydoor, setDoor] = useState(null)
     const [scanned, setScanned] = useState(false)
@@ -26,7 +28,26 @@ function Rooms(props){
     const [temp, setTemp] = useState(null)
     const [notification, setNotification] = useState(null)
 
+    // useEffect(()=>{
 
+    //     db.transaction(tx => {
+    //         console.log('masuk')
+    //         tx.executeSql(
+    //           "create table if not exists privateKey (id integer primary key not null,kunci text not null);"
+    //         );
+    //       });
+    //       db.transaction(tx => {
+    //         tx.executeSql(
+    //           `select * from privateKey`,
+    //           (_, { rows: { _array } }) => console.log(_array)
+    //         );
+    //       });
+    //       db.transaction(tx => {
+    //         tx.executeSql(
+    //           `insert `
+    //         );
+    //       });
+    // },[])
     const registerForPushNotificationsAsync = async () => {
           const { status: existingStatus } = await Permissions.getAsync(
             Permissions.NOTIFICATIONS
@@ -270,6 +291,8 @@ function Rooms(props){
     const handleBarcode = () => {
         setModalVisible(true)
     }
+
+    
 
     const closeModal = () =>{
         setModalVisible(false)
